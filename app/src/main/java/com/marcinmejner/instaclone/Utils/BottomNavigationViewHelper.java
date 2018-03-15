@@ -7,12 +7,12 @@ import android.support.design.widget.BottomNavigationView;
 import android.view.MenuItem;
 
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
-import com.marcinmejner.instaclone.HomeActivity;
-import com.marcinmejner.instaclone.LikesActivity;
-import com.marcinmejner.instaclone.ProfileActivity;
+import com.marcinmejner.instaclone.Home.HomeActivity;
+import com.marcinmejner.instaclone.Likes.LikesActivity;
+import com.marcinmejner.instaclone.Profile.ProfileActivity;
 import com.marcinmejner.instaclone.R;
-import com.marcinmejner.instaclone.SearchActivity;
-import com.marcinmejner.instaclone.ShareActivity;
+import com.marcinmejner.instaclone.Search.SearchActivity;
+import com.marcinmejner.instaclone.Share.ShareActivity;
 
 /**
  * Created by Marc on 12.03.2018.

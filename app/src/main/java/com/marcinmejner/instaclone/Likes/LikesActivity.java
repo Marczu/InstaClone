@@ -1,4 +1,4 @@
-package com.marcinmejner.instaclone;
+package com.marcinmejner.instaclone.Likes;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -9,18 +9,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
+import com.marcinmejner.instaclone.R;
 import com.marcinmejner.instaclone.Utils.BottomNavigationViewHelper;
 
 /**
  * Created by Marc on 15.03.2018.
  */
 
-public class ShareActivity extends AppCompatActivity {
-    private static final String TAG = "ShareActivity";
-    public static final int ACTIVITY_NUM = 2;
+public class LikesActivity extends AppCompatActivity {
+    private static final String TAG = "LikesActivity";
+    public static final int ACTIVITY_NUM = 3;
 
 
-    private Context mContex = ShareActivity.this;
+    private Context mContex = LikesActivity.this;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
