@@ -13,6 +13,7 @@
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/tabs"
+                android:background="@drawable/white_gray_border_bottom"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
