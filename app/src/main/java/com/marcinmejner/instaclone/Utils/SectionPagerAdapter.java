@@ -1,4 +1,4 @@
-package com.marcinmejner.instaclone.Home;
+package com.marcinmejner.instaclone.Utils;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
