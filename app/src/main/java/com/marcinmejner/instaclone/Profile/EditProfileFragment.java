@@ -27,7 +27,6 @@ public class EditProfileFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_editprofile, container, false);
         profileImage = view.findViewById(R.id.profile_photo);
 
-        initImageLoader();
 
         setProfileImage();
 
@@ -44,11 +43,7 @@ public class EditProfileFragment extends Fragment {
         return view;
     }
 
-    private void initImageLoader(){
-        UniversalImageLoader universalImageLoader = new UniversalImageLoader(getActivity());
-        ImageLoader.getInstance().init(universalImageLoader.getConfig());
 
-    }
 
     private void setProfileImage() {
         String imageURL = "https://www.famousbirthdays.com/headshots/tori-amos-2.jpg";

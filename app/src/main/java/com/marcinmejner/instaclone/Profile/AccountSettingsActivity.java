@@ -6,6 +6,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -13,7 +15,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
+import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import com.marcinmejner.instaclone.R;
+import com.marcinmejner.instaclone.Utils.BottomNavigationViewHelper;
 import com.marcinmejner.instaclone.Utils.SectionStagePagerAdapter;
 
 import java.util.ArrayList;
@@ -24,6 +28,7 @@ import java.util.ArrayList;
 
 public class AccountSettingsActivity extends AppCompatActivity {
     private static final String TAG = "AccountSettingsActivity";
+    public static final int ACTIVITY_NUM = 4;
 
     private Context mContex;
 
@@ -42,7 +47,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
         relativeLayout = findViewById(R.id.relLayout1);
 
         setupSettingList();
-
+        setupNavigationNavigationView();
         setupFragments();
 
         //ustawianie BackArrow
@@ -88,5 +93,14 @@ public class AccountSettingsActivity extends AppCompatActivity {
                 setViewPager(i);
             }
         });
+    }
+
+    private void setupNavigationNavigationView(){
+        BottomNavigationViewEx bottomNavigationViewEx =  findViewById(R.id.bottomNavViewBar);
+        BottomNavigationViewHelper.setup(bottomNavigationViewEx);
+        BottomNavigationViewHelper.enableNavigation(mContex, bottomNavigationViewEx);
+        Menu menu = bottomNavigationViewEx.getMenu();
+        MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
+        menuItem.setChecked(true);
     }
 }

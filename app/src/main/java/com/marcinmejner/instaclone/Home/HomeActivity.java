@@ -12,6 +12,8 @@ import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import com.marcinmejner.instaclone.R;
 import com.marcinmejner.instaclone.Utils.BottomNavigationViewHelper;
 import com.marcinmejner.instaclone.Utils.SectionPagerAdapter;
+import com.marcinmejner.instaclone.Utils.UniversalImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class HomeActivity extends AppCompatActivity {
     private static final String TAG = "HomeActivity";
@@ -27,9 +29,18 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        initImageLoader();
         setupNavigationNavigationView();
         setupViewPager();
+
     }
+
+    private void initImageLoader(){
+        UniversalImageLoader universalImageLoader = new UniversalImageLoader(mContex);
+        ImageLoader.getInstance().init(universalImageLoader.getConfig());
+
+    }
+
     /*
     * Do tworzenia tabów Camera, Home, Message
     * */
