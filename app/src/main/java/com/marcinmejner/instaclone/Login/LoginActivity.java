@@ -64,9 +64,9 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-      /*
+      /*--------------------------------------------------------------------------------
         ------------------------------FIREBASE -----------------------------------------
-    */
+        --------------------------------------------------------------------------------*/
 
     private void init() {
         //Ustawianie przycisku logowania
@@ -101,7 +101,6 @@ public class LoginActivity extends AppCompatActivity {
 
                                         /* Jeśli udało sie logowanie przenosimy sie do Home Activity */
                                         if (mAuth.getCurrentUser() != null) {
-                                            Log.d(TAG, "POZIOM 5 ");
                                             Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                                             startActivity(intent);
                                             finish();
