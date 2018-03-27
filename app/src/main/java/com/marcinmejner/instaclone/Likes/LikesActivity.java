@@ -27,7 +27,7 @@ public class LikesActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        Log.d(TAG, "onCreate: started");
+        Log.d(TAG, "onCreate: startedd");
 
         setupNavigationNavigationView();
     }
