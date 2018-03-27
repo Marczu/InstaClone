@@ -11,25 +11,41 @@
         android:paddingLeft="25dp"
         android:paddingRight="25dp">
         
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="75dp"
-            android:src="@drawable/instagram_logo"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="25dp"/>
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="REGISTER NEW ACCOUNT"
+          android:textSize="20sp"
+          android:textStyle="bold"
+          android:textColor="@color/black"
+          android:gravity="center_horizontal"/>
         
+        <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp">
+
+        <EditText
+            android:id="@+id/input_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:hint="Email"/>
+        </android.support.design.widget.TextInputLayout>
+
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp">
-            
+
             <EditText
-                android:id="@+id/input_email"
+                android:id="@+id/input_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textEmailAddress"
-                android:hint="Email"/>
+                android:inputType="text"
+                android:hint="Full Name"/>
 
         </android.support.design.widget.TextInputLayout>
 
@@ -49,12 +65,12 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.v7.widget.AppCompatButton
-            android:id="@+id/btn_login"
+            android:id="@+id/btn_register"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="25dp"
-            android:layout_marginTop="20dp"
-            android:text="Login"
+            android:text="Register"
+            android:layout_marginTop="25dp"
             android:padding="12dp"
             android:background="@drawable/white_rounded_button"
             />
@@ -73,20 +89,21 @@
     </LinearLayout>
     
     <ProgressBar
-        android:id="@+id/loginRequestLoadingProgressBar"
+        android:id="@+id/progressBar"
         android:layout_centerInParent="true"
         android:layout_width="200dp"
         android:layout_height="200dp" />
 
     <TextView
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Please Wait...."
+        android:text="Please Wait..."
         android:textColor="@color/black"
-        android:textSize="20sp"
-        android:layout_alignBottom="@+id/loginRequestLoadingProgressBar"
-        android:layout_alignRight="@id/loginRequestLoadingProgressBar"
-        android:layout_alignLeft="@id/loginRequestLoadingProgressBar"/>
+        android:layout_marginTop="2dp"
+        android:textSize="25sp"
+        android:layout_below="@id/loginRequestLoadingProgressBar"
+        android:layout_centerInParent="true"/>
 
 
 
