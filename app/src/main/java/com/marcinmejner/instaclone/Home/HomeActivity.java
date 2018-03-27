@@ -1,14 +1,20 @@
 package com.marcinmejner.instaclone.Home;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
+import com.marcinmejner.instaclone.Login.LoginActivity;
 import com.marcinmejner.instaclone.R;
 import com.marcinmejner.instaclone.Utils.BottomNavigationViewHelper;
 import com.marcinmejner.instaclone.Utils.SectionPagerAdapter;
@@ -21,7 +27,9 @@ public class HomeActivity extends AppCompatActivity {
 
     private Context mContex = HomeActivity.this;
 
-
+    //Firebase Auth
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthStateListener;
 
 
     @Override
@@ -29,11 +37,15 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        setupFirebaseAuth();
+
         initImageLoader();
         setupNavigationNavigationView();
         setupViewPager();
 
     }
+
+
 
     private void initImageLoader(){
         UniversalImageLoader universalImageLoader = new UniversalImageLoader(mContex);
@@ -68,4 +80,53 @@ public class HomeActivity extends AppCompatActivity {
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
         menuItem.setChecked(true);
     }
+
+    /*
+        ------------------------------FIREBASE -----------------------------------------
+    */
+
+    private void checkCurrentUser(FirebaseUser user) {
+        Log.d(TAG, "checkCurrentUser: checking if user is logged in");
+        if(user==null){
+            Intent intent = new Intent(mContex, LoginActivity.class);
+            startActivity(intent);
+        }
+
+
+
+
+    }
+    private void setupFirebaseAuth(){
+        mAuth = FirebaseAuth.getInstance();
+        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+
+                checkCurrentUser(user);
+
+                if(user!=null){
+                    Log.d(TAG, "user signed_in:  " + user.getUid());
+                }else{
+                    Log.d(TAG, "onAuthStateChanged: user signed_out");
+                }
+            }
+        };
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthStateListener);
+        checkCurrentUser(mAuth.getCurrentUser());
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(mAuthStateListener != null){
+            mAuth.removeAuthStateListener(mAuthStateListener);
+        }
+    }
+
 }
