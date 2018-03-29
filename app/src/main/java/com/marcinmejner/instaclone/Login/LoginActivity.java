@@ -23,6 +23,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.marcinmejner.instaclone.Home.HomeActivity;
 import com.marcinmejner.instaclone.R;
 
+import org.w3c.dom.Text;
+
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
 
@@ -69,7 +71,8 @@ public class LoginActivity extends AppCompatActivity {
         --------------------------------------------------------------------------------*/
 
     private void init() {
-        //Ustawianie przycisku logowania
+
+        /*Ustawienia przycisku logowania*/
         Button buttonLogin = findViewById(R.id.btn_login);
         buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,8 +123,22 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+        /*
+        *      Rejestrowanie nowego usera
+        * */
+        TextView linkSignUp = findViewById(R.id.link_signup);
+        linkSignUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "onClick: navigating to register screen");
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
+    /*Setup Firebase*/
 
     private void setupFirebaseAuth() {
         mAuth = FirebaseAuth.getInstance();
