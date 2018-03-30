@@ -41,6 +41,7 @@ public class RegisterActivity extends AppCompatActivity {
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference myRef;
 
+    private String append = "";
 
 
     @Override
@@ -131,6 +132,17 @@ public class RegisterActivity extends AppCompatActivity {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             // sprawdzamy czy user jest juz w użyciu
+                            if(firebaseMethods.checkIfUsernameExists(username, dataSnapshot)){
+                                append = myRef.push().getKey().substring(3,10);
+                                Log.d(TAG, "onDataChange: Username already exists, appending random string to name: " + append);
+                            }
+                            username = username + append;
+
+                            //Dodawanie nowego usera do bazy
+
+                            firebaseMethods.addNewUser(email, username, "", "", "");
+
+                            Toast.makeText(context, "Signup successfull! sending verification email", Toast.LENGTH_LONG).show();
 
 
                         }
