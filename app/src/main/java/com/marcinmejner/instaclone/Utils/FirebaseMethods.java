@@ -35,12 +35,12 @@ public class FirebaseMethods {
         myRef = mFirebaseDatabase.getReference();
         mAuth = FirebaseAuth.getInstance();
 
-        if(mAuth.getCurrentUser() != null){
+        if (mAuth.getCurrentUser() != null) {
             userID = mAuth.getCurrentUser().getUid();
         }
     }
 
-    public boolean checkIfUsernameExists(String username, DataSnapshot datasnapshot){
+    public boolean checkIfUsernameExists(String username, DataSnapshot datasnapshot) {
         Log.d(TAG, "checkIfUsernameExists: sprawdzamy czy " + username + "juz istnieje");
 
         User user = new User();
@@ -48,11 +48,12 @@ public class FirebaseMethods {
         for (DataSnapshot ds : datasnapshot.child(userID).getChildren()) {
             Log.d(TAG, "checkIfUsernameExists: datasnapshot : " + ds);
             user.setUsername(ds.getValue(User.class).getUsername());
-        }
 
-        if(StringManipulation.expandUsername(user.getUsername()).equals(username)){
-            Log.d(TAG, "checkIfUsernameExists: found a match: " + user.getUsername() );
-            return true;
+
+            if (StringManipulation.expandUsername(user.getUsername()).equals(username)) {
+                Log.d(TAG, "checkIfUsernameExists: found a match: " + user.getUsername());
+                return true;
+            }
         }
 
         return false;
@@ -60,20 +61,23 @@ public class FirebaseMethods {
 
     /**
      * Register new email and password to firebase Auth
+     *
      * @param email
      * @param password
      * @param username
      */
-    public void registerNewEmail(final String email, String password, final String username ){
+    public void registerNewEmail(final String email, String password, final String username) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            //wysyłanie veryfikującego emaila
+                            sendVerificationEmail();
+
                             // Sign in success, update UI with the signed-in user's information
                             userID = mAuth.getCurrentUser().getUid();
                             Log.d(TAG, "createUserWithEmail:success: userID = " + userID);
-
 
 
                         } else {
@@ -81,24 +85,44 @@ public class FirebaseMethods {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
 
-
                         }
 
-                        // ...
                     }
                 });
     }
 
+    /*Veryfikacja poprzez Email*/
+    public void sendVerificationEmail() {
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            user.sendEmailVerification()
+            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+
+                    } else {
+                        Toast.makeText(mContex, "couldn't send verification email", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+
+    }
+
     /**
      * Dodawanie nowego usera do bazy
+     * Dodawanie informacji o user_account_settings
+     *
      * @param email
      * @param username
      * @param desctiption
      * @param website
      * @param profile_photo
      */
-    public void addNewUser(String email, String username, String desctiption, String website, String profile_photo){
-        User user = new User(userID, 3444801, email, StringManipulation.condenseUsername(username));
+    public void addNewUser(String email, String username, String desctiption, String website, String profile_photo) {
+        User user = new User(userID, 1, email, StringManipulation.condenseUsername(username));
 
         myRef.child(mContex.getString(R.string.dbname_users))
                 .child(userID)

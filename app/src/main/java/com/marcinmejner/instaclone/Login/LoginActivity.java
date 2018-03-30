@@ -95,10 +95,29 @@ public class LoginActivity extends AppCompatActivity {
                             .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
+
+                                    FirebaseUser user = mAuth.getCurrentUser();
+                                    try{
+
+                                        if(user.isEmailVerified()){
+                                            Log.d(TAG, "onComplete: Email bym zweryfikowany, mozemy przejsc do homeActivity");
+                                            startActivity(new Intent(context, HomeActivity.class));
+                                        }else{
+                                            Toast.makeText(context, "Email is not verified \n Please chceck your Email inbox", Toast.LENGTH_LONG).show();
+                                            progressBar.setVisibility(View.GONE);
+                                            pleaseWait.setVisibility(View.GONE);
+                                            mAuth.signOut();
+                                        }
+
+                                    }catch (NullPointerException e){
+                                        Log.d(TAG, "onComplete: NullPointerException " + e.getMessage());
+                                    }
+
+
                                     if (task.isSuccessful()) {
                                         // Sign in success, update UI with the signed-in user's information
                                         Log.d(TAG, "signInWithEmail: Success");
-                                        FirebaseUser user = mAuth.getCurrentUser();
+                                    //    FirebaseUser user = mAuth.getCurrentUser();
 
                                         progressBar.setVisibility(View.GONE);
                                         pleaseWait.setVisibility(View.GONE);
