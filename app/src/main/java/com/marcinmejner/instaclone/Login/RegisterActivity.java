@@ -170,7 +170,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
         if (mAuthStateListener != null) {
             mAuth.removeAuthStateListener(mAuthStateListener);

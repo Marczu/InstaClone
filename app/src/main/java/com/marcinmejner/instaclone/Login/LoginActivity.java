@@ -96,41 +96,28 @@ public class LoginActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
 
-                                    FirebaseUser user = mAuth.getCurrentUser();
-                                    try{
-
-                                        if(user.isEmailVerified()){
-                                            Log.d(TAG, "onComplete: Email bym zweryfikowany, mozemy przejsc do homeActivity");
-                                            startActivity(new Intent(context, HomeActivity.class));
-                                        }else{
-                                            Toast.makeText(context, "Email is not verified \n Please chceck your Email inbox", Toast.LENGTH_LONG).show();
-                                            progressBar.setVisibility(View.GONE);
-                                            pleaseWait.setVisibility(View.GONE);
-                                            mAuth.signOut();
-                                        }
-
-                                    }catch (NullPointerException e){
-                                        Log.d(TAG, "onComplete: NullPointerException " + e.getMessage());
-                                    }
-
-
                                     if (task.isSuccessful()) {
-                                        // Sign in success, update UI with the signed-in user's information
-                                        Log.d(TAG, "signInWithEmail: Success");
-                                    //    FirebaseUser user = mAuth.getCurrentUser();
+                                        FirebaseUser user = mAuth.getCurrentUser();
+                                        try{
 
-                                        progressBar.setVisibility(View.GONE);
-                                        pleaseWait.setVisibility(View.GONE);
+                                            if(user.isEmailVerified()){
+                                                /* Jeśli udała sie weryfikacja i logowanie, przenosimy sie do Home Activity */
+                                                Log.d(TAG, "onComplete: Email bym zweryfikowany, mozemy przejsc do homeActivity");
+                                                startActivity(new Intent(context, HomeActivity.class));
+                                                finish();
+                                            }else{
+                                                Toast.makeText(context, "Email is not verified\nPlease chceck your Email inbox", Toast.LENGTH_LONG).show();
+                                                progressBar.setVisibility(View.GONE);
+                                                pleaseWait.setVisibility(View.GONE);
+                                                mAuth.signOut();
+                                            }
 
-                                        /* Jeśli udało sie logowanie przenosimy sie do Home Activity */
-                                        if (mAuth.getCurrentUser() != null) {
-                                            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                                            startActivity(intent);
-                                            finish();
+                                        }catch (NullPointerException e){
+                                            Log.d(TAG, "onComplete: NullPointerException " + e.getMessage());
                                         }
 
                                     } else {
-                                        // If sign in fails, display a message to the user.
+                                        /* Jeśli weryfikacja i logowanie nie powiedzie się, wyświetlamy wiadomość dla usera */
                                         Log.w(TAG, "signInWithEmail:failure", task.getException());
                                         Toast.makeText(LoginActivity.this, "Authentication failed.",
                                                 Toast.LENGTH_SHORT).show();
@@ -184,7 +171,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
         if (mAuthStateListener != null) {
             mAuth.removeAuthStateListener(mAuthStateListener);
