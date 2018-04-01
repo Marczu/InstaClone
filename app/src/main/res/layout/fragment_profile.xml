@@ -7,13 +7,9 @@
     <RelativeLayout
         android:id="@+id/relLayout1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
-
-
-        <include layout="@layout/layout_bootom_navigation_view"/>
-
-
+        <include layout="@layout/snippet_top_profilebar"/>
 
     </RelativeLayout>
 
@@ -33,5 +29,7 @@
         android:id="@+id/profileProgressBar"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="100dp"/>
+
+    <include layout="@layout/layout_bootom_navigation_view"/>
 
 </RelativeLayout>
