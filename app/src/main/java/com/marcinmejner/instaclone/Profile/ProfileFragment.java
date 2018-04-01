@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,14 +18,29 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
+import com.marcinmejner.instaclone.Login.LoginActivity;
 import com.marcinmejner.instaclone.R;
 import com.marcinmejner.instaclone.Utils.BottomNavigationViewHelper;
+import com.marcinmejner.instaclone.models.UserSettings;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileFragment extends android.support.v4.app.Fragment {
     private static final String TAG = "ProfileFragment";
+
+    //Firebase Auth
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference myRef;
 
     public static final int ACTIVITY_NUM = 4;
 
@@ -66,6 +82,11 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
         return view;
     }
 
+    private void setProfileWidgets(UserSettings userSettings){
+        Log.d(TAG, "setProfileWidgets: ");
+    }
+
+
     /*Ustawianie Toolbara*/
     private void setupToolbar() {
 
@@ -90,5 +111,62 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
         menuItem.setChecked(true);
     }
 
+
+      /*
+        ------------------------------FIREBASE -----------------------------------------
+    */
+
+    private void setupFirebaseAuth(){
+        Log.d(TAG, "setupFirebaseAuth: setting up firebase");
+        
+        mAuth = FirebaseAuth.getInstance();
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        myRef = mFirebaseDatabase.getReference();
+        
+        
+        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+
+
+                if(user!=null){
+                    Log.d(TAG, "user signed_in, with userUID:  " + user.getUid());
+                }else{
+                    Log.d(TAG, "onAuthStateChanged: user signed_out");
+                }
+            }
+        };
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                /*Pozyskiwanie danych o userze z bazy danych*/
+
+
+
+                /*Pozyskiwanie obrazków usera z bazy danych*/
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthStateListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if(mAuthStateListener != null){
+            mAuth.removeAuthStateListener(mAuthStateListener);
+        }
+    }
 
 }

@@ -16,6 +16,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.marcinmejner.instaclone.R;
 import com.marcinmejner.instaclone.models.User;
 import com.marcinmejner.instaclone.models.UserAccountSettings;
+import com.marcinmejner.instaclone.models.UserSettings;
 
 public class FirebaseMethods {
     private static final String TAG = "FirebaseMethods";
@@ -97,16 +98,16 @@ public class FirebaseMethods {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             user.sendEmailVerification()
-            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
 
-                    } else {
-                        Toast.makeText(mContex, "couldn't send verification email", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
+                            } else {
+                                Toast.makeText(mContex, "couldn't send verification email", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
         }
 
     }
@@ -128,11 +129,123 @@ public class FirebaseMethods {
                 .child(userID)
                 .setValue(user);
 
-        UserAccountSettings settings = new UserAccountSettings(desctiption, username, 0, 0, 0, profile_photo, username, website);
+        UserAccountSettings settings = new UserAccountSettings(
+                desctiption,
+                username,
+                0,
+                0,
+                0,
+                profile_photo,
+                StringManipulation.condenseUsername(username),
+                website);
 
         myRef.child(mContex.getString(R.string.dbname_user_account_settings))
                 .child(userID)
                 .setValue(settings);
 
+    }
+
+    /**
+     * Odbieranie Account Setting dla obecnie zalogowanego Usera
+     * Database: user_account_settings node
+     *
+     * @param dataSnapshot
+     * @return
+     */
+    private UserSettings getUserSettings(DataSnapshot dataSnapshot) {
+        Log.d(TAG, "getUserAccountSettings: odbieranie userAccountSettings z firebase");
+
+        UserAccountSettings settings = new UserAccountSettings();
+        User user = new User();
+
+        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+
+
+            /*user_account_setting node*/
+            if (ds.getKey().equals(mContex.getString(R.string.dbname_user_account_settings))) {
+                Log.d(TAG, "getUserAccountSettings: dataSnapshot: " + ds);
+
+                try {
+                    settings.setDisplay_name(
+                            ds.child(userID)
+                                    .getValue(UserAccountSettings.class)
+                                    .getDisplay_name()
+                    );
+                    settings.setUsername(
+                            ds.child(userID)
+                                    .getValue(UserAccountSettings.class)
+                                    .getUsername()
+                    );
+                    settings.setWebsite(
+                            ds.child(userID)
+                                    .getValue(UserAccountSettings.class)
+                                    .getWebsite()
+                    );
+                    settings.setDescription(
+                            ds.child(userID)
+                                    .getValue(UserAccountSettings.class)
+                                    .getDescription()
+                    );
+                    settings.setProfile_photo(
+                            ds.child(userID)
+                                    .getValue(UserAccountSettings.class)
+                                    .getProfile_photo()
+                    );
+                    settings.setPosts(
+                            ds.child(userID)
+                                    .getValue(UserAccountSettings.class)
+                                    .getPosts()
+                    );
+                    settings.setFollowing(
+                            ds.child(userID)
+                                    .getValue(UserAccountSettings.class)
+                                    .getFollowing()
+                    );
+                    settings.setFollowers(
+                            ds.child(userID)
+                                    .getValue(UserAccountSettings.class)
+                                    .getFollowers()
+                    );
+
+                    Log.d(TAG, "getUserAccountSettings: Otrzymane informacje z user_account_settings: " + settings.toString());
+                } catch (NullPointerException e) {
+                    Log.e(TAG, "getUserAccountSettings: NullPoincerException: " + e.getMessage());
+                }
+
+            }
+            /*users node*/
+            if (ds.getKey().equals(mContex.getString(R.string.dbname_users))) {
+                Log.d(TAG, "getUserAccountSettings: dataSnapshot: " + ds);
+                user.setUsername(
+                        ds.child(userID)
+                                .getValue(User.class)
+                                .getUsername()
+                );
+                user.setEmail(
+                        ds.child(userID)
+                                .getValue(User.class)
+                                .getEmail()
+                );
+                user.setPhone_number(
+                        ds.child(userID)
+                                .getValue(User.class)
+                                .getPhone_number()
+                );
+                user.setUser_id(
+                        ds.child(userID)
+                                .getValue(User.class)
+                                .getUser_id()
+                );
+                Log.d(TAG, "getUserAccountSettings: Otrzymane informacje z user: " + user.toString());
+
+
+
+
+            }
+
+
+
+        }
+        return new UserSettings(user, settings);
     }
 }
