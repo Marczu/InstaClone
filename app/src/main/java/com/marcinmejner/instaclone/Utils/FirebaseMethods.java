@@ -152,7 +152,7 @@ public class FirebaseMethods {
      * @param dataSnapshot
      * @return
      */
-    private UserSettings getUserSettings(DataSnapshot dataSnapshot) {
+    public UserSettings getUserSettings(DataSnapshot dataSnapshot) {
         Log.d(TAG, "getUserAccountSettings: odbieranie userAccountSettings z firebase");
 
         UserAccountSettings settings = new UserAccountSettings();

@@ -29,6 +29,10 @@ import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import com.marcinmejner.instaclone.Login.LoginActivity;
 import com.marcinmejner.instaclone.R;
 import com.marcinmejner.instaclone.Utils.BottomNavigationViewHelper;
+import com.marcinmejner.instaclone.Utils.FirebaseMethods;
+import com.marcinmejner.instaclone.Utils.UniversalImageLoader;
+import com.marcinmejner.instaclone.models.User;
+import com.marcinmejner.instaclone.models.UserAccountSettings;
 import com.marcinmejner.instaclone.models.UserSettings;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -41,6 +45,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference myRef;
+    private FirebaseMethods mFirebaseMethods;
 
     public static final int ACTIVITY_NUM = 4;
 
@@ -67,6 +72,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
         mDescription = view.findViewById(R.id.description);
         mFollowing = view.findViewById(R.id.tvFollowing);
         mFollowers = view.findViewById(R.id.tvFollowers);
+        mProfilePhoto = view.findViewById(R.id.profile_photo);
         mPosts = view.findViewById(R.id.tvPosts);
         mProgressbar = view.findViewById(R.id.profileProgressBar);
         gridView = view.findViewById(R.id.gridView);
@@ -75,15 +81,34 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
         bottomNavigationViewEx = view.findViewById(R.id.bottomNavViewBar);
         mContex = getActivity();
 
+        mFirebaseMethods = new FirebaseMethods(getActivity());
+
         setupNavigationNavigationView();
         setupToolbar();
+        setupFirebaseAuth();
 
 
         return view;
     }
 
     private void setProfileWidgets(UserSettings userSettings){
-        Log.d(TAG, "setProfileWidgets: ");
+        Log.d(TAG, "setProfileWidgets: ustawianie wigdetów z uzyciem bazy z firebase" + userSettings.toString());
+        Log.d(TAG, "setProfileWidgets: ustawianie wigdetów z uzyciem bazy z firebase" + userSettings.getSettings().getUsername());
+
+        // User user = userSettings.getUser();
+        UserAccountSettings settings = userSettings.getSettings();
+
+        UniversalImageLoader.setImage(settings.getProfile_photo(), mProfilePhoto, null, "");
+
+        mDisplayName.setText(settings.getDisplay_name());
+        mUsername.setText(settings.getUsername());
+        mWebsite.setText(settings.getWebsite());
+        mDescription.setText(settings.getDescription());
+        mPosts.setText(String.valueOf(settings.getPosts()));
+        mFollowers.setText(String.valueOf(settings.getFollowers()));
+        mFollowing.setText(String.valueOf(settings.getFollowing()));
+
+        mProgressbar.setVisibility(View.GONE);
     }
 
 
@@ -142,6 +167,8 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 /*Pozyskiwanie danych o userze z bazy danych*/
 
+
+                setProfileWidgets(mFirebaseMethods.getUserSettings(dataSnapshot));
 
 
                 /*Pozyskiwanie obrazków usera z bazy danych*/

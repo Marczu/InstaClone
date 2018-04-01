@@ -17,9 +17,9 @@
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:id="@+id/profileId"
+                    android:id="@+id/username"
                     android:layout_centerVertical="true"
-                    android:text="Marcin Mejner"
+                    android:text="Mar"
                     android:textSize="20sp"
                     android:textColor="@color/black"
                     android:layout_marginStart="15dp"
