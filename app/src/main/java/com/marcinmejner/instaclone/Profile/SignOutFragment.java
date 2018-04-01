@@ -75,7 +75,9 @@ public class SignOutFragment extends Fragment {
                     Log.d(TAG, "onAuthStateChanged: user signed_out");
                     Log.d(TAG, "onAuthStateChanged: wracamy do ekranu logowania");
                     //Wracamy do ekranu logowania
-                    startActivity(new Intent(getActivity(), LoginActivity.class));
+                    Intent intent = new Intent(getActivity(), LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
                 }
             }
         };

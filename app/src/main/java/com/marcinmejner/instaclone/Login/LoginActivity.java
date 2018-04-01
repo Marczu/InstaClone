@@ -23,11 +23,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.marcinmejner.instaclone.Home.HomeActivity;
 import com.marcinmejner.instaclone.Likes.LikesActivity;
 import com.marcinmejner.instaclone.R;
+import com.orhanobut.logger.AndroidLogAdapter;
+import com.orhanobut.logger.Logger;
 
 import org.w3c.dom.Text;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
+
+
 
     //Firebase Auth
     private FirebaseAuth mAuth;
@@ -45,6 +49,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         Log.d(TAG, "onCreate: start");
+        Logger.addLogAdapter(new AndroidLogAdapter());
+
 
         progressBar = findViewById(R.id.progressBar);
         pleaseWait = findViewById(R.id.please_wait);
@@ -102,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                             if(user.isEmailVerified()){
                                                 /* Jeśli udała sie weryfikacja i logowanie, przenosimy sie do Home Activity */
-                                                Log.d(TAG, "onComplete: Email bym zweryfikowany, mozemy przejsc do homeActivity");
+                                                Logger.d("Email był zweryfikowany, mozemy przejsc do homeActivity");
                                                 startActivity(new Intent(context, HomeActivity.class));
                                                 finish();
                                             }else{
