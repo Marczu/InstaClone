@@ -27,17 +27,17 @@
             android:weightSum="100">
 
             <RelativeLayout
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="15dp"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="25"
-                android:layout_marginStart="25dp"
+                android:layout_weight="30"
+                android:layout_marginStart="20dp"
                 >
 
                <de.hdodenhof.circleimageview.CircleImageView
                    android:id="@+id/profile_photo"
-                   android:layout_width="80dp"
-                   android:layout_height="80dp"
+                   android:layout_width="110dp"
+                   android:layout_height="110dp"
                    app:civ_border_color="@color/black"
                    app:civ_border_width="2dp"
                    android:layout_centerVertical="true"/>
@@ -46,10 +46,10 @@
 
             <RelativeLayout
                 android:layout_width="0dp"
-                android:layout_weight="75"
+                android:layout_weight="70"
                 android:layout_height="match_parent"
-                android:layout_marginStart="30dp"
-                android:layout_marginEnd="30dp">
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="20dp">
 
                 <include layout="@layout/snippet_top_profile"/>
 

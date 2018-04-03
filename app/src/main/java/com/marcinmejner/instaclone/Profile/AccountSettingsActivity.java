@@ -1,7 +1,9 @@
 package com.marcinmejner.instaclone.Profile;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -15,10 +17,19 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import com.marcinmejner.instaclone.R;
 import com.marcinmejner.instaclone.Utils.BottomNavigationViewHelper;
+import com.marcinmejner.instaclone.Utils.FirebaseMethods;
 import com.marcinmejner.instaclone.Utils.SectionStagePagerAdapter;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 
@@ -49,6 +60,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
         setupSettingList();
         setupNavigationNavigationView();
         setupFragments();
+        getIncommingIntent();
 
         //ustawianie BackArrow
         ImageView backArrow = findViewById(R.id.backArrow);
@@ -61,13 +73,24 @@ public class AccountSettingsActivity extends AppCompatActivity {
 
     }
 
-    private void setupFragments(){
+    /*Sprawdzanie czy otrzymaliśmy intent z ProfileFragment, zeby móc przejść do EditProfileFragment*/
+    private void getIncommingIntent() {
+        Intent intent = getIntent();
+        if (intent.hasExtra(getString(R.string.calling_activity))) {
+            Log.d(TAG, "getIncommingIntent: Otrzymujemy intent z " + getString(R.string.profile_activity));
+            setViewPager(pagerAdapter.getFragmentNumber(getString(R.string.edit_profile_fragment)));
+
+        }
+
+    }
+
+    private void setupFragments() {
         pagerAdapter = new SectionStagePagerAdapter(getSupportFragmentManager());
         pagerAdapter.addFragment(new EditProfileFragment(), getString(R.string.edit_profile_fragment));
         pagerAdapter.addFragment(new SignOutFragment(), getString(R.string.sign_out_fragment));
     }
 
-    private void setViewPager(int fragmentNumber){
+    private void setViewPager(int fragmentNumber) {
         relativeLayout.setVisibility(View.GONE);
         Log.d(TAG, "setViewPager: nagigating forgragment number: " + fragmentNumber);
         viewPager.setAdapter(pagerAdapter);
@@ -75,7 +98,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
 
     }
 
-    private void setupSettingList(){
+    private void setupSettingList() {
         Log.d(TAG, "setupSettingList: inicjuje 'accountSetting' list");
         ListView listView = findViewById(R.id.lvAccountSettings);
 
@@ -95,12 +118,15 @@ public class AccountSettingsActivity extends AppCompatActivity {
         });
     }
 
-    private void setupNavigationNavigationView(){
-        BottomNavigationViewEx bottomNavigationViewEx =  findViewById(R.id.bottomNavViewBar);
+    private void setupNavigationNavigationView() {
+        BottomNavigationViewEx bottomNavigationViewEx = findViewById(R.id.bottomNavViewBar);
         BottomNavigationViewHelper.setup(bottomNavigationViewEx);
         BottomNavigationViewHelper.enableNavigation(mContex, bottomNavigationViewEx);
         Menu menu = bottomNavigationViewEx.getMenu();
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
         menuItem.setChecked(true);
     }
+
+
+
 }

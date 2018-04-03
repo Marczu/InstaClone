@@ -87,6 +87,17 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
         setupToolbar();
         setupFirebaseAuth();
 
+        TextView editProfile = view.findViewById(R.id.textEditProfile);
+
+        editProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "onClick: nawigujemy do: " + mContex.getString(R.string.edit_profile_fragment));
+                Intent intent = new Intent(getActivity(), AccountSettingsActivity.class);
+                intent.putExtra(getString(R.string.calling_activity), getString(R.string.profile_activity));
+                startActivity(intent);
+            }
+        });
 
         return view;
     }
@@ -107,7 +118,6 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
         mPosts.setText(String.valueOf(settings.getPosts()));
         mFollowers.setText(String.valueOf(settings.getFollowers()));
         mFollowing.setText(String.valueOf(settings.getFollowing()));
-
         mProgressbar.setVisibility(View.GONE);
     }
 
@@ -136,11 +146,9 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
         menuItem.setChecked(true);
     }
 
-
-      /*
+    /*
         ------------------------------FIREBASE -----------------------------------------
     */
-
     private void setupFirebaseAuth(){
         Log.d(TAG, "setupFirebaseAuth: setting up firebase");
         
@@ -166,10 +174,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 /*Pozyskiwanie danych o userze z bazy danych*/
-
-
                 setProfileWidgets(mFirebaseMethods.getUserSettings(dataSnapshot));
-
 
                 /*Pozyskiwanie obrazków usera z bazy danych*/
 
@@ -195,5 +200,4 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
             mAuth.removeAuthStateListener(mAuthStateListener);
         }
     }
-
 }
