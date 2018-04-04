@@ -41,24 +41,37 @@ public class FirebaseMethods {
         }
     }
 
-    public boolean checkIfUsernameExists(String username, DataSnapshot datasnapshot) {
-        Log.d(TAG, "checkIfUsernameExists: sprawdzamy czy " + username + "juz istnieje");
+    public void updateUsername(String username){
+        Log.d(TAG, "updateUsername: uaktualniamy username na :" + username);
+        myRef.child(mContex.getString(R.string.dbname_users))
+                .child(userID)
+                .child(mContex.getString(R.string.field_username))
+                .setValue(username);
 
-        User user = new User();
-
-        for (DataSnapshot ds : datasnapshot.child(userID).getChildren()) {
-            Log.d(TAG, "checkIfUsernameExists: datasnapshot : " + ds);
-            user.setUsername(ds.getValue(User.class).getUsername());
-
-
-            if (StringManipulation.expandUsername(user.getUsername()).equals(username)) {
-                Log.d(TAG, "checkIfUsernameExists: found a match: " + user.getUsername());
-                return true;
-            }
-        }
-
-        return false;
+        myRef.child(mContex.getString(R.string.dbname_user_account_settings))
+                .child(userID)
+                .child(mContex.getString(R.string.field_username))
+                .setValue(username);
     }
+
+//    public boolean checkIfUsernameExists(String username, DataSnapshot datasnapshot) {
+//        Log.d(TAG, "checkIfUsernameExists: sprawdzamy czy " + username + "juz istnieje");
+//
+//        User user = new User();
+//
+//        for (DataSnapshot ds : datasnapshot.child(userID).getChildren()) {
+//            Log.d(TAG, "checkIfUsernameExists: datasnapshot : " + ds);
+//            user.setUsername(ds.getValue(User.class).getUsername());
+//
+//
+//            if (StringManipulation.expandUsername(user.getUsername()).equals(username)) {
+//                Log.d(TAG, "checkIfUsernameExists: found a match: " + user.getUsername());
+//                return true;
+//            }
+//        }
+//
+//        return false;
+//    }
 
     /**
      * Register new email and password to firebase Auth

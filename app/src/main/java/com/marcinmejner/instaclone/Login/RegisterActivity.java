@@ -20,9 +20,11 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.marcinmejner.instaclone.R;
 import com.marcinmejner.instaclone.Utils.FirebaseMethods;
+import com.marcinmejner.instaclone.models.User;
 
 public class RegisterActivity extends AppCompatActivity {
     private static final String TAG = "RegisterActivity";
@@ -114,6 +116,52 @@ public class RegisterActivity extends AppCompatActivity {
 
     /*Setup Firebase*/
 
+    /**
+     * sprawdzamy czy @param username juz istnieje w bazie danych
+     * @param username
+     */
+    private void checkIfUsernameExists(final String username) {
+        Log.d(TAG, "checkIfUsernameExists: sprawdzamy czy " + username + "juz istnieje w bazie");
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference
+                .child(getString(R.string.dbname_users))
+                .orderByChild(getString(R.string.field_username))
+                .equalTo(username);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+                for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()){
+                    if(dataSnapshot.exists()){
+                        Log.d(TAG, "checkIfUsernameExists FOUND A MATCH " + dataSnapshot.getValue(User.class).getUsername());
+                        append = myRef.push().getKey().substring(3,10);
+                        Log.d(TAG, "onDataChange: Username already exists, appending random string to name: " + append);
+                    }
+                }
+
+                String mUsername = "";
+                mUsername = username + append;
+
+                //Dodawanie nowego usera do bazy
+
+                firebaseMethods.addNewUser(email, mUsername, "", "", "");
+
+                Toast.makeText(context, "Signup successfull! sending verification email", Toast.LENGTH_LONG).show();
+                mAuth.signOut();
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
     private void setupFirebaseAuth() {
         Log.d(TAG, "setupFirebaseAuth: ");
         mAuth = FirebaseAuth.getInstance();
@@ -131,20 +179,7 @@ public class RegisterActivity extends AppCompatActivity {
                     myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            // sprawdzamy czy user jest juz w użyciu
-                            if(firebaseMethods.checkIfUsernameExists(username, dataSnapshot)){
-                                append = myRef.push().getKey().substring(3,10);
-                                Log.d(TAG, "onDataChange: Username already exists, appending random string to name: " + append);
-                            }
-                            username = username + append;
-
-                            //Dodawanie nowego usera do bazy
-
-                            firebaseMethods.addNewUser(email, username, "", "", "");
-
-                            Toast.makeText(context, "Signup successfull! sending verification email", Toast.LENGTH_LONG).show();
-                            mAuth.signOut();
-
+                            checkIfUsernameExists(username);
                         }
 
                         @Override

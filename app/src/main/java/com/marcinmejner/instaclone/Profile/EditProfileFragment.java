@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -18,10 +19,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.marcinmejner.instaclone.R;
 import com.marcinmejner.instaclone.Utils.FirebaseMethods;
 import com.marcinmejner.instaclone.Utils.UniversalImageLoader;
+import com.marcinmejner.instaclone.dialogs.ConfirmPasswordDialog;
+import com.marcinmejner.instaclone.models.User;
 import com.marcinmejner.instaclone.models.UserAccountSettings;
 import com.marcinmejner.instaclone.models.UserSettings;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -41,12 +45,15 @@ public class EditProfileFragment extends Fragment {
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference myRef;
     private FirebaseMethods mFirebaseMethods;
+    private String userID;
 
     //EditProfile Fragment Widgets
     private EditText mDisplayName, mUsername, mWebsite, mDescription, mEmail, mPhoneNumber;
     private TextView mChangeProfilePhoto;
     private CircleImageView mProfilePhoto;
 
+    //vars
+    private UserSettings mUserSetting;
 
     @Nullable
     @Override
@@ -65,23 +72,119 @@ public class EditProfileFragment extends Fragment {
 
         setupFirebaseAuth();
 
-//        setProfileImage();
-
         //ustawienie backarrow
         ImageView backArrow = view.findViewById(R.id.backArrow);
         backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getActivity().finish();
+            }
+        });
+
+        ImageView checkmark = view.findViewById(R.id.saveChanges);
+        checkmark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "onClick: Proba zapisania zmian");
+                saveProfileSettings();
+            }
+        });
+
+        return view;
+    }
+
+    /*
+     *Obieramy dane z widgetów i zapisujemy je w bazie danych
+     *Zanim tego dokonamy sprawdzamy czy username jest unikalny
+     * */
+    private void saveProfileSettings() {
+        final String displayName = mDisplayName.getText().toString();
+        final String userName = mUsername.getText().toString();
+        final String website = mWebsite.getText().toString();
+        final String description = mDescription.getText().toString();
+        final String email = mEmail.getText().toString();
+        final long phoneNumber = Long.parseLong(mPhoneNumber.getText().toString());
+
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                //przypadek1: user nie zmienił username
+                if (!mUserSetting.getUser().getUsername().equals(userName)) {
+                    checkIfUsernameExists(userName);
+                }
+
+                //przypadek2: user zmienił swój email
+
+                if (!mUserSetting.getUser().getEmail().equals(email)) {
+
+                    //krok1 : reautenticate
+                    ConfirmPasswordDialog dialog = new ConfirmPasswordDialog();
+                    dialog.show(getFragmentManager(), getString(R.string.confirm_password_dialog));
+
+                    //krok2 : sprawdzamy czy email juz istnieje
+
+                    //krok3 : zmieniamy enail
+
+
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
             }
         });
-        return view;
+    }
+
+    /**
+     * sprawdzamy czy @param username juz istnieje w bazie danych
+     *
+     * @param username
+     */
+    private void checkIfUsernameExists(final String username) {
+        Log.d(TAG, "checkIfUsernameExists: sprawdzamy czy " + username + "juz istnieje w bazie");
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference
+                .child(getString(R.string.dbname_users))
+                .orderByChild(getString(R.string.field_username))
+                .equalTo(username);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if (!dataSnapshot.exists()) {
+                    //dodajemy username
+                    mFirebaseMethods.updateUsername(username);
+
+                    Toast.makeText(getActivity(), "Saved username", Toast.LENGTH_SHORT).show();
+                }
+                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                    if (dataSnapshot.exists()) {
+                        Log.d(TAG, "checkIfUsernameExists FOUND A MATCH " + dataSnapshot.getValue(User.class).getUsername());
+                        Toast.makeText(getActivity(), "That username already exists", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     private void setProfileWidgets(UserSettings userSettings) {
         Log.d(TAG, "setProfileWidgets: ustawianie wigdetów z uzyciem bazy z firebase" + userSettings.toString());
         Log.d(TAG, "setProfileWidgets: ustawianie wigdetów z uzyciem bazy z firebase" + userSettings.getSettings().getUsername());
+
+        mUserSetting = userSettings;
 
         // User user = userSettings.getUser();
         UserAccountSettings settings = userSettings.getSettings();
@@ -96,12 +199,6 @@ public class EditProfileFragment extends Fragment {
         mPhoneNumber.setText(String.valueOf(userSettings.getUser().getPhone_number()));
     }
 
-
-//    private void setProfileImage() {
-//        String imageURL = "https://www.famousbirthdays.com/headshots/tori-amos-2.jpg";
-//        UniversalImageLoader.setImage(imageURL, profileImage, null, "");
-//    }
-
     /*
         ------------------------------FIREBASE -----------------------------------------
     */
@@ -112,6 +209,7 @@ public class EditProfileFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         myRef = mFirebaseDatabase.getReference();
+        userID = mAuth.getCurrentUser().getUid();
 
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
