@@ -105,38 +105,26 @@ public class EditProfileFragment extends Fragment {
         final String email = mEmail.getText().toString();
         final long phoneNumber = Long.parseLong(mPhoneNumber.getText().toString());
 
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                //przypadek1: user nie zmienił username
-                if (!mUserSetting.getUser().getUsername().equals(userName)) {
-                    checkIfUsernameExists(userName);
-                }
+        //przypadek1: jesli user dokonał zmieny username
+        if (!mUserSetting.getUser().getUsername().equals(userName)) {
+            checkIfUsernameExists(userName);
+        }
 
-                //przypadek2: user zmienił swój email
+        //przypadek2: user zmienił swój email
 
-                if (!mUserSetting.getUser().getEmail().equals(email)) {
+        if (!mUserSetting.getUser().getEmail().equals(email)) {
 
-                    //krok1 : reautenticate
-                    ConfirmPasswordDialog dialog = new ConfirmPasswordDialog();
-                    dialog.show(getFragmentManager(), getString(R.string.confirm_password_dialog));
+            //krok1 : reautenticate
+            ConfirmPasswordDialog dialog = new ConfirmPasswordDialog();
+            dialog.show(getFragmentManager(), getString(R.string.confirm_password_dialog));
 
-                    //krok2 : sprawdzamy czy email juz istnieje
+            //krok2 : sprawdzamy czy email juz istnieje
 
-                    //krok3 : zmieniamy enail
+            //krok3 : zmieniamy enail
 
 
-                }
-
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        }
     }
 
     /**
