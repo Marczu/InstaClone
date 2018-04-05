@@ -266,7 +266,7 @@ public class EditProfileFragment extends Fragment implements ConfirmPasswordDial
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        Log.d(TAG, "onComplete: user reauthtenticated");
+                        Log.d(TAG, "onComplete: user reauthtenticated.");
 
                     }
                 });
