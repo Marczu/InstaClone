@@ -176,7 +176,6 @@ public class EditProfileFragment extends Fragment implements ConfirmPasswordDial
 
     private void setProfileWidgets(UserSettings userSettings) {
         Log.d(TAG, "setProfileWidgets: ustawianie wigdetów z uzyciem bazy z firebase" + userSettings.toString());
-        Log.d(TAG, "setProfileWidgets: ustawianie wigdetów z uzyciem bazy z firebase" + userSettings.getSettings().getUsername());
 
         mUserSetting = userSettings;
 
