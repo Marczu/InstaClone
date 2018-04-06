@@ -20,6 +20,7 @@ import com.google.firebase.auth.EmailAuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.ProviderQueryResult;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -41,7 +42,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by Marc on 18.03.2018.
  */
 
-public class EditProfileFragment extends Fragment implements ConfirmPasswordDialog.OnConfirmPasswordListener{
+public class EditProfileFragment extends Fragment implements ConfirmPasswordDialog.OnConfirmPasswordListener {
     private static final String TAG = "EditProfileFragment";
 
     //Firebase Auth
@@ -94,7 +95,6 @@ public class EditProfileFragment extends Fragment implements ConfirmPasswordDial
                 saveProfileSettings();
             }
         });
-
         return view;
     }
 
@@ -109,7 +109,6 @@ public class EditProfileFragment extends Fragment implements ConfirmPasswordDial
         final String description = mDescription.getText().toString();
         final String email = mEmail.getText().toString();
         final long phoneNumber = Long.parseLong(mPhoneNumber.getText().toString());
-
 
         //przypadek1: jesli user dokonał zmieny username
         if (!mUserSetting.getUser().getUsername().equals(userName)) {
@@ -128,9 +127,34 @@ public class EditProfileFragment extends Fragment implements ConfirmPasswordDial
             //krok2 : sprawdzamy czy email juz istnieje
 
             //krok3 : zmieniamy enail
-
-
         }
+
+        /*
+        * Zmiana pozostałych ustawień, ktore nie wymagają zeby były unique
+        * */
+        if(!mUserSetting.getSettings().getDisplay_name().equals(displayName)){
+            //uaktualniamy display_name
+            mFirebaseMethods.updateUserAccountSetting(displayName, null,null, 0);
+        }
+
+        if(!mUserSetting.getSettings().getWebsite().equals(website)){
+            //uaktualniamy website
+            mFirebaseMethods.updateUserAccountSetting(null, website,null, 0);
+        }
+
+        if(!mUserSetting.getSettings().getDescription().equals(description)){
+            //uaktualniamy description
+            mFirebaseMethods.updateUserAccountSetting(null, null, description, 0);
+        }
+
+        if(mUserSetting.getUser().getPhone_number() != phoneNumber){
+            //uaktualniamy profilePhoto
+            mFirebaseMethods.updateUserAccountSetting(null, null,null, phoneNumber);
+        }
+
+
+
+
     }
 
     /**
@@ -254,22 +278,60 @@ public class EditProfileFragment extends Fragment implements ConfirmPasswordDial
 
     @Override
     public void onConfirmPassword(String password) {
-        Log.d(TAG, "onConfirmPassword: hasło to" + password );
+        Log.d(TAG, "onConfirmPassword: hasło to" + password);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         AuthCredential credential = EmailAuthProvider
                 .getCredential(mAuth.getCurrentUser().getEmail(), password);
 
+
         mAuth.getCurrentUser().reauthenticate(credential)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        Log.d(TAG, "onComplete: user reauthtenticated.");
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "onComplete: user reauthtenticated.");
 
+                            ////////////Sprawdzamy czy eimail juz nie istnieje w bazie danych
+                            mAuth.fetchProvidersForEmail(mEmail.getText().toString()).addOnCompleteListener(new OnCompleteListener<ProviderQueryResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<ProviderQueryResult> task) {
+                                    if (task.isSuccessful()) {
+
+                                        try {
+                                            if (task.getResult().getProviders().size() == 1) {
+                                                Log.d(TAG, "onComplete: ten email jest juz uzywany");
+                                                Toast.makeText(getActivity(), "That email is already in use", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Log.d(TAG, "onComplete: ten email nie jest zajęty");
+
+                                                //////////Email jest dostepny, uaktualniamy go
+                                                mAuth.getCurrentUser().updateEmail(mEmail.getText().toString())
+                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                if (task.isSuccessful()) {
+                                                                    Log.d(TAG, "onComplete: sukces, email został uaktualniony");
+                                                                    Toast.makeText(getActivity(), "Email was updated", Toast.LENGTH_LONG).show();
+                                                                    mFirebaseMethods.updateEmail(mEmail.getText().toString());
+                                                                }
+                                                            }
+                                                        });
+                                            }
+                                        } catch (NullPointerException e) {
+                                            Log.e(TAG, "onComplete: " + e.getMessage());
+                                        }
+
+                                    }
+                                }
+                            });
+
+
+                        } else {
+                            Log.d(TAG, "onComplete: authentication failed");
+                        }
                     }
                 });
-
-
     }
 }

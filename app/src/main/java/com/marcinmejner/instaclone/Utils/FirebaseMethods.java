@@ -41,7 +41,57 @@ public class FirebaseMethods {
         }
     }
 
-    public void updateUsername(String username){
+    /**
+     * uaktualnianie 'user_account_setting' node dla aktualnego usera
+     *
+     * @param displayName
+     * @param website
+     * @param description
+     * @param phoneNumber
+     */
+    public void updateUserAccountSetting(String displayName, String website, String description, long phoneNumber) {
+        Log.d(TAG, "updateUserAccountSetting: uaktualnianie user_account_settings");
+
+        if (displayName != null) {
+            myRef.child(mContex.getString(R.string.dbname_user_account_settings))
+                    .child(userID)
+                    .child(mContex.getString(R.string.field_display_name))
+                    .setValue(displayName);
+        }
+
+        if (website != null) {
+            myRef.child(mContex.getString(R.string.dbname_user_account_settings))
+                    .child(userID)
+                    .child(mContex.getString(R.string.field_website))
+                    .setValue(website);
+        }
+
+        if (description != null) {
+            myRef.child(mContex.getString(R.string.dbname_user_account_settings))
+                    .child(userID)
+                    .child(mContex.getString(R.string.field_description))
+                    .setValue(description);
+        }
+
+        if (phoneNumber != 0) {
+            myRef.child(mContex.getString(R.string.dbname_user_account_settings))
+                    .child(userID)
+                    .child(mContex.getString(R.string.field_phone_number))
+                    .setValue(phoneNumber);
+
+            myRef.child(mContex.getString(R.string.dbname_users))
+                    .child(userID)
+                    .child(mContex.getString(R.string.field_phone_number))
+                    .setValue(phoneNumber);
+        }
+    }
+
+    /**
+     * Uaktualniamy username w user i user_account_settings
+     *
+     * @param username
+     */
+    public void updateUsername(String username) {
         Log.d(TAG, "updateUsername: uaktualniamy username na :" + username);
         myRef.child(mContex.getString(R.string.dbname_users))
                 .child(userID)
@@ -52,6 +102,19 @@ public class FirebaseMethods {
                 .child(userID)
                 .child(mContex.getString(R.string.field_username))
                 .setValue(username);
+    }
+
+    /**
+     * Uuaktualniamy email w user's node
+     *
+     * @param email
+     */
+    public void updateEmail(String email) {
+        Log.d(TAG, "updateEmail: uaktualniamy email na :" + email);
+        myRef.child(mContex.getString(R.string.dbname_users))
+                .child(userID)
+                .child(mContex.getString(R.string.field_email))
+                .setValue(email);
     }
 
 //    public boolean checkIfUsernameExists(String username, DataSnapshot datasnapshot) {
@@ -252,10 +315,7 @@ public class FirebaseMethods {
                 Log.d(TAG, "getUserAccountSettings: Otrzymane informacje z user: " + user.toString());
 
 
-
-
             }
-
 
 
         }

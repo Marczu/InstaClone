@@ -56,11 +56,8 @@ public class ConfirmPasswordDialog extends android.support.v4.app.DialogFragment
             public void onClick(View view) {
                 Log.d(TAG, "onClick: zamykamy dialog");
                 getDialog().dismiss();
-                
-
             }
         });
-
 
         return view;
     }
