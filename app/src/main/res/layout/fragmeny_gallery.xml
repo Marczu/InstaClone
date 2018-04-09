@@ -9,6 +9,7 @@
         android:layout_height="wrap_content">
 
         <!--Gallery Toolbar-->
+        <include layout="@layout/snippet_top_gallerytoolbar"/>
 
     </RelativeLayout>
 

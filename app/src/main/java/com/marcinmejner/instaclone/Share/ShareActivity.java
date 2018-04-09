@@ -46,7 +46,16 @@ public class ShareActivity extends AppCompatActivity {
         } else {
             veryfiPermissions(Permissions.PERMISSIONS);
         }
+    }
 
+    /**
+     * Zwracamy aktyalny numer tabu:
+     * 0 = GalleryFragment
+     * 1 = PhotoFragment
+     * @return
+     */
+    public int getCurrentTabNumber(){
+        return mViewPager.getCurrentItem();
     }
 
     private void setupViewPager(){
@@ -99,11 +108,10 @@ public class ShareActivity extends AppCompatActivity {
 
     /**
      * Sprawdzamy czy pojedyńcze pozwolenie zostało udzielone
-     *
      * @param permission
      * @return
      */
-    private boolean checkPermisions(String permission) {
+    public boolean checkPermisions(String permission) {
         Log.d(TAG, "checkPermisions: sprawdzamy pozwolenie: " + permission);
 
         int permissionRequest = ActivityCompat.checkSelfPermission(ShareActivity.this, permission);
