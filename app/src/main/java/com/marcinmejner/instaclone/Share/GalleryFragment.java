@@ -1,5 +1,6 @@
 package com.marcinmejner.instaclone.Share;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
@@ -46,6 +47,7 @@ public class GalleryFragment extends Fragment {
     //vars
     private ArrayList<String> directories;
     public String mAppend = "file:/";
+    private String mSelectedImage;
 
 
     @Nullable
@@ -76,6 +78,9 @@ public class GalleryFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "onClick: nawigujemy do finalnego share screem");
+                Intent intent = new Intent(getActivity(), NextActivity.class);
+                intent.putExtra(getString(R.string.selected_image), mSelectedImage);
+                startActivity(intent);
             }
         });
 
@@ -91,11 +96,18 @@ public class GalleryFragment extends Fragment {
         if (FileSearch.getDirectoryPaths(filePaths.PICRURES) != null) {
             directories = FileSearch.getDirectoryPaths(filePaths.PICRURES);
         }
-
         directories.add(filePaths.CAMERA);
+        directories.add(filePaths.DOWNLOADS);
+
+        ArrayList<String> directoryNames = new ArrayList<>();
+        for (int i = 0; i < directories.size(); i++) {
+            int index  = directories.get(i).lastIndexOf("/");
+            String string = directories.get(i).substring(index);
+            directoryNames.add(string);
+        }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
-                android.R.layout.simple_spinner_item, directories);
+                android.R.layout.simple_spinner_item, directoryNames);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         directorySpinner.setAdapter(adapter);
@@ -111,10 +123,8 @@ public class GalleryFragment extends Fragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
             }
         });
-
     }
 
     private void setupGridView(String selectedDirectory) {
@@ -131,13 +141,16 @@ public class GalleryFragment extends Fragment {
         gridView.setAdapter(adapter);
 
         //ustawiamy pierwszy obrazek do wyświetlenia po tym jak aktivity jest inflated
-        setImage(imgURLs.get(0), galleryImage, mAppend);
+
+            setImage(imgURLs.get(0), galleryImage, mAppend);
+            mSelectedImage = imgURLs.get(0);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Log.d(TAG, "onItemClick: wybrano obrazek: " + imgURLs.get(i));
                 setImage(imgURLs.get(i), galleryImage, mAppend);
+                mSelectedImage = imgURLs.get(i);
             }
         });
     }
@@ -150,7 +163,6 @@ public class GalleryFragment extends Fragment {
             @Override
             public void onLoadingStarted(String imageUri, View view) {
                 progressBar.setVisibility(View.VISIBLE);
-
             }
 
             @Override
@@ -168,7 +180,6 @@ public class GalleryFragment extends Fragment {
                 progressBar.setVisibility(View.INVISIBLE);
             }
         });
-
     }
 }
 
