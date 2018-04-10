@@ -1,5 +1,6 @@
 package com.marcinmejner.instaclone.Share;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -8,6 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -15,13 +18,24 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.marcinmejner.instaclone.R;
+import com.marcinmejner.instaclone.Utils.FilePaths;
+import com.marcinmejner.instaclone.Utils.FileSearch;
+import com.marcinmejner.instaclone.Utils.GridImageAdapter;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+
+import java.util.ArrayList;
 
 /**
  * Created by Marc on 15.03.2018.
  */
 
-public class GalleryFragment extends Fragment{
+public class GalleryFragment extends Fragment {
     private static final String TAG = "GalleryFragment";
+
+    //stałe
+    private static final int NUM_GRID_COLUMNS = 3;
 
     //widgets
     private GridView gridView;
@@ -29,8 +43,10 @@ public class GalleryFragment extends Fragment{
     private ProgressBar progressBar;
     private Spinner directorySpinner;
 
-
     //vars
+    private ArrayList<String> directories;
+    public String mAppend = "file:/";
+
 
     @Nullable
     @Override
@@ -43,6 +59,8 @@ public class GalleryFragment extends Fragment{
         directorySpinner = view.findViewById(R.id.spinnerDirectory);
         progressBar = view.findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
+
+        directories = new ArrayList<>();
 
         ImageView shareClose = view.findViewById(R.id.ivCloseShare);
         shareClose.setOnClickListener(new View.OnClickListener() {
@@ -61,12 +79,95 @@ public class GalleryFragment extends Fragment{
             }
         });
 
+        init();
+
         return view;
     }
 
-    private void init(){
+    private void init() {
+        FilePaths filePaths = new FilePaths();
 
         //sprawdzamy inne foldery w "/storage/emulated/0/pictures
+        if (FileSearch.getDirectoryPaths(filePaths.PICRURES) != null) {
+            directories = FileSearch.getDirectoryPaths(filePaths.PICRURES);
+        }
+
+        directories.add(filePaths.CAMERA);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_spinner_item, directories);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        directorySpinner.setAdapter(adapter);
+
+        directorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.d(TAG, "onItemClick: wybrano " + directories.get(i));
+
+                //ustawiamy nasz image grid dla wybranego katalogu
+                setupGridView(directories.get(i));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+    }
+
+    private void setupGridView(String selectedDirectory) {
+        Log.d(TAG, "setupGridView: wybrany katalog to: " + selectedDirectory);
+        final ArrayList<String> imgURLs = FileSearch.getFilePaths(selectedDirectory);
+
+        //Ustawiamy szerokość kolumn
+        int gridWidth = getResources().getDisplayMetrics().widthPixels;
+        int imageWidth = gridWidth / NUM_GRID_COLUMNS;
+        gridView.setColumnWidth(imageWidth);
+
+        //uzywamy grid adaptera
+        GridImageAdapter adapter = new GridImageAdapter(getActivity(), R.layout.layout_grid_imageview, mAppend, imgURLs);
+        gridView.setAdapter(adapter);
+
+        //ustawiamy pierwszy obrazek do wyświetlenia po tym jak aktivity jest inflated
+        setImage(imgURLs.get(0), galleryImage, mAppend);
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.d(TAG, "onItemClick: wybrano obrazek: " + imgURLs.get(i));
+                setImage(imgURLs.get(i), galleryImage, mAppend);
+            }
+        });
+    }
+
+    private void setImage(String imgURL, ImageView image, String append) {
+        Log.d(TAG, "setImage: ustawiamy obrazek");
+        ImageLoader imageLoader = ImageLoader.getInstance();
+
+        imageLoader.displayImage(append + imgURL, image, new ImageLoadingListener() {
+            @Override
+            public void onLoadingStarted(String imageUri, View view) {
+                progressBar.setVisibility(View.VISIBLE);
+
+            }
+
+            @Override
+            public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onLoadingCancelled(String imageUri, View view) {
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+        });
 
     }
 }

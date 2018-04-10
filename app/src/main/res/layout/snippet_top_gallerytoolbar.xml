@@ -29,6 +29,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@+id/ivCloseShare"
+                    android:layout_toLeftOf="@+id/tvNext"
+                    android:layout_marginRight="15dp"
                     android:textSize="20sp"
                     android:textColor="@color/black"
                     android:text="Gallery"
