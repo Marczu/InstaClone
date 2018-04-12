@@ -17,33 +17,21 @@
                 android:layout_height="match_parent">
 
                 <ImageView
-                    android:id="@+id/ivCloseShare"
+                    android:id="@+id/ivBackArrow"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="20dp"
-                    android:src="@drawable/ic_black_x" />
-
-                <Spinner
-                    android:id="@+id/spinnerDirectory"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/ivCloseShare"
-                    android:textSize="20sp"
-                    android:textColor="@color/black"
-                    android:text="Gallery"
-                    android:layout_centerVertical="true"
-                    android:gravity="center_vertical">
+                    android:src="@drawable/ic_backarrow" />
 
 
-                </Spinner>
 
                 <TextView
-                    android:id="@+id/tvNext"
+                    android:id="@+id/tvShare"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:text="@string/string_next"
+                    android:text="@string/string_share"
                     android:layout_marginRight="15dp"
                     android:textSize="20dp"
                     android:textColor="@color/link_blue"

@@ -22,7 +22,7 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 public class UniversalImageLoader {
 
-    public static final int defaultImage = R.drawable.ic_android;
+    public static final int defaultImage = R.drawable.default_image;
     private Context context;
 
     public UniversalImageLoader(Context context) {
