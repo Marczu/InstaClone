@@ -7,6 +7,8 @@
     <!-- Firebase databse field -->
     <string name="dbname_users">users</string>
     <string name="dbname_user_account_settings">user_account_settings</string>
+    <string name="dbname_photos">photos</string>
+    <string name="dbname_user_photos">user_photos</string>
     <string name="profile_fragment">Profile</string>
 
     <string name="field_username">username</string>
@@ -23,6 +25,9 @@
     <string name="calling_activity">calling_activity</string>
     <string name="selected_image">selected_image</string>
 
+    <!--Photo Types-->
+    <string name="new_photo">new_photo</string>
+    <string name="profile_photo">profile_photo</string>
 
     <!--Activity_names-->
     <string name="profile_activity">Profile Activity</string>
@@ -33,5 +38,6 @@
     <string name="string_open_camera">OPEN CAMERA</string>
     <string name="string_next">next</string>
     <string name="string_share">Share</string>
+
 
 </resources>

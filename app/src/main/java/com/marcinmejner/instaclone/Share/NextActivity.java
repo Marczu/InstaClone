@@ -7,8 +7,10 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,13 +34,21 @@ public class NextActivity extends AppCompatActivity{
     private DatabaseReference myRef;
     private FirebaseMethods mFirebaseMethods;
 
+    //widgets
+    private EditText mCaption;
+
     //vars
     public String mAppend = "file:/";
+    private int imageCount = 0;
+    private String imgUrl;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_next);
+        mCaption = findViewById(R.id.caption);
+
+        mFirebaseMethods = new FirebaseMethods(this);
 
         setupFirebaseAuth();
 
@@ -57,11 +67,23 @@ public class NextActivity extends AppCompatActivity{
             public void onClick(View view) {
 
                 //Uploadujemy obrazek do Firebase
-
+                Toast.makeText(NextActivity.this, "Attempting to upload new Photo", Toast.LENGTH_SHORT).show();
+                String caption = mCaption.getText().toString();
+                mFirebaseMethods.uploadNewPhoto(getString(R.string.new_photo), caption, imageCount, imgUrl);
             }
         });
 
         setImage();
+    }
+
+    private void someMethod(){
+/*
+       1. Tworzymy data model dla zdjęć
+       2. Dodajemy parametry dla zdjęcia (data, imageURL, photo_id, tags, user_id)
+       3. Liczymy ile zdjeć juz dany user posiada
+       4. Uploadujemy zdjęcie do Firebase Storage i dodajemy 2 nowe node'y w Firebase Databse
+            'photos' i 'user_photos'
+*/
     }
 
     /*
@@ -83,6 +105,8 @@ public class NextActivity extends AppCompatActivity{
         mAuth = FirebaseAuth.getInstance();
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         myRef = mFirebaseDatabase.getReference();
+        Log.d(TAG, "onDataChange: image count: " + imageCount);
+
 
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
@@ -101,6 +125,9 @@ public class NextActivity extends AppCompatActivity{
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
+                imageCount = mFirebaseMethods.getImageCount(dataSnapshot);
+                Log.d(TAG, "onDataChange: image count: " + imageCount);
 
             }
 

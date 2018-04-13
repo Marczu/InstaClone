@@ -10,4 +10,6 @@ public class FilePaths {
     public String PICRURES = ROOT_DIR + "/Pictures";
     public String DOWNLOADS = ROOT_DIR + "/Download";
     public String CAMERA = ROOT_DIR + "/DCIM/camera";
+
+    public String FIREBASE_IMAGE_STORAGE = "photos/users";
 }

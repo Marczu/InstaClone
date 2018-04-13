@@ -13,6 +13,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.marcinmejner.instaclone.R;
 import com.marcinmejner.instaclone.models.User;
 import com.marcinmejner.instaclone.models.UserAccountSettings;
@@ -26,6 +28,7 @@ public class FirebaseMethods {
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference myRef;
+    private StorageReference mStorageReference;
     private String userID;
 
     private Context mContex;
@@ -34,11 +37,49 @@ public class FirebaseMethods {
         this.mContex = mContex;
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         myRef = mFirebaseDatabase.getReference();
+        mStorageReference = FirebaseStorage.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
 
         if (mAuth.getCurrentUser() != null) {
             userID = mAuth.getCurrentUser().getUid();
         }
+    }
+
+    public void uploadNewPhoto(String photoType, String caption, int imageCount, String imgUrl) {
+        Log.d(TAG, "uploadNewPhoto: probowa uploadu nowego zdjecia");
+
+        FilePaths filePaths = new FilePaths()
+
+        //nowe photo
+        if (photoType.equals(mContex.getString(R.string.new_photo))) {
+            Log.d(TAG, "uploadNewPhoto: uploadujemy nowe zdjęcie");
+
+            String user_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+            StorageReference storageReference = mStorageReference
+                    .child(filePaths.FIREBASE_IMAGE_STORAGE + "/" + user_id + "/photo" + (imageCount + 1));
+
+        }
+        //nowe profile_photo
+        else if(photoType.equals(mContex.getString(R.string.profile_photo))){
+            Log.d(TAG, "uploadNewPhoto: uploaduje nowe zdjecie profilowe");
+
+        }
+
+
+
+
+    }
+
+    public int getImageCount(DataSnapshot dataSnapshot) {
+        int count = 0;
+        for (DataSnapshot ds : dataSnapshot
+                .child(mContex.getString(R.string.dbname_user_photos))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .getChildren()) {
+            count++;
+        }
+        return count;
     }
 
     /**
@@ -321,4 +362,6 @@ public class FirebaseMethods {
         }
         return new UserSettings(user, settings);
     }
+
+
 }
