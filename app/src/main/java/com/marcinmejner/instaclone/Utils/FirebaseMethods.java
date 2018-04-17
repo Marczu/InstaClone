@@ -1,6 +1,7 @@
 package com.marcinmejner.instaclone.Utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -21,6 +22,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.marcinmejner.instaclone.Home.HomeActivity;
 import com.marcinmejner.instaclone.R;
 import com.marcinmejner.instaclone.models.Photo;
 import com.marcinmejner.instaclone.models.User;
@@ -95,6 +97,9 @@ public class FirebaseMethods {
 
                     //nawigujemy do main feed, zeby user mogl zobaczyc dodane zdjecie
 
+                    Intent intent = new Intent(mContex, HomeActivity.class);
+                    mContex.startActivity(intent);
+
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -118,7 +123,61 @@ public class FirebaseMethods {
         //nowe profile_photo
         else if(photoType.equals(mContex.getString(R.string.profile_photo))){
             Log.d(TAG, "uploadNewPhoto: uploaduje nowe zdjecie profilowe");
+
+
+            String user_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+            StorageReference storageReference = mStorageReference
+                    .child(filePaths.FIREBASE_IMAGE_STORAGE + "/" + user_id + "/profile_photo");
+
+            //Konwertujemy image URL na bitmap
+            Bitmap bm = ImageManager.getBitmap(imgUrl);
+
+            byte[] bytes = ImageManager.getBytesFromBitmap(bm, 100);
+
+            UploadTask uploadTask = null;
+            uploadTask = storageReference.putBytes(bytes);
+
+            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                    Uri firebaseUrl = taskSnapshot.getDownloadUrl();
+
+                    Toast.makeText(mContex, "Photo upload success", Toast.LENGTH_SHORT).show();
+
+                  //insert into user_account_settings node
+                    setProfilePhoto(firebaseUrl.toString());
+
+
+
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d(TAG, "onFailure: Photo upload failed");
+                    Toast.makeText(mContex, "Photo upload failed", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                    double progress = (100 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+
+                    if(progress - 15 > mPhotoUploadProgress){
+                        Toast.makeText(mContex, "Photo upload progress: " + String.format("%.0f", progress) + "%", Toast.LENGTH_SHORT).show();
+                        mPhotoUploadProgress = progress;
+                    }
+                    Log.d(TAG, "onProgress: upload progress: " + progress + " %");
+                }
+            });
+
         }
+    }
+
+    private void setProfilePhoto(String url){
+        Log.d(TAG, "setProfilePhoto: setting new profile image: " + url);
+
     }
 
     private String getTimestamp(){
