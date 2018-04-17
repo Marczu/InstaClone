@@ -1,5 +1,6 @@
 package com.marcinmejner.instaclone.Profile;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -28,6 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.marcinmejner.instaclone.R;
+import com.marcinmejner.instaclone.Share.ShareActivity;
 import com.marcinmejner.instaclone.Utils.FirebaseMethods;
 import com.marcinmejner.instaclone.Utils.UniversalImageLoader;
 import com.marcinmejner.instaclone.dialogs.ConfirmPasswordDialog;
@@ -214,6 +216,18 @@ public class EditProfileFragment extends Fragment implements ConfirmPasswordDial
         mDescription.setText(settings.getDescription());
         mEmail.setText(userSettings.getUser().getEmail());
         mPhoneNumber.setText(String.valueOf(userSettings.getUser().getPhone_number()));
+
+        //zmieniamy zdjecie profilowe
+        mChangeProfilePhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "onClick:  zmieniamy zdjecie profilowe");
+                Intent intent = new Intent(getActivity(), ShareActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getActivity().startActivity(intent);
+                getActivity().finish();
+            }
+        });
     }
 
     /*

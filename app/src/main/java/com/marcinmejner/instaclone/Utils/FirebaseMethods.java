@@ -23,6 +23,7 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.marcinmejner.instaclone.Home.HomeActivity;
+import com.marcinmejner.instaclone.Profile.AccountSettingsActivity;
 import com.marcinmejner.instaclone.R;
 import com.marcinmejner.instaclone.models.Photo;
 import com.marcinmejner.instaclone.models.User;
@@ -124,6 +125,11 @@ public class FirebaseMethods {
         else if(photoType.equals(mContex.getString(R.string.profile_photo))){
             Log.d(TAG, "uploadNewPhoto: uploaduje nowe zdjecie profilowe");
 
+            ((AccountSettingsActivity)mContex).setViewPager(
+                    ((AccountSettingsActivity)mContex).pagerAdapter
+                            .getFragmentNumber(mContex.getString(R.string.edit_profile_fragment))
+            );
+
 
             String user_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -148,7 +154,6 @@ public class FirebaseMethods {
 
                   //insert into user_account_settings node
                     setProfilePhoto(firebaseUrl.toString());
-
 
 
 
@@ -177,6 +182,11 @@ public class FirebaseMethods {
 
     private void setProfilePhoto(String url){
         Log.d(TAG, "setProfilePhoto: setting new profile image: " + url);
+
+        myRef.child(mContex.getString(R.string.dbname_user_account_settings))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(mContex.getString(R.string.profile_photo))
+                .setValue(url);
 
     }
 

@@ -43,7 +43,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
 
     private Context mContex;
 
-    private SectionStagePagerAdapter pagerAdapter;
+    public SectionStagePagerAdapter pagerAdapter;
     private ViewPager viewPager;
     private RelativeLayout relativeLayout;
 
@@ -76,6 +76,20 @@ public class AccountSettingsActivity extends AppCompatActivity {
     /*Sprawdzanie czy otrzymaliśmy intent z ProfileFragment, zeby móc przejść do EditProfileFragment*/
     private void getIncommingIntent() {
         Intent intent = getIntent();
+
+        //jesli mamy imageUrl doczepiony do extra, oznacza ze ostał wybrany z grallery/photo fragmentu
+
+        if(intent.hasExtra(getString(R.string.selected_image))){
+            Log.d(TAG, "getIncommingIntent: nowy nadchodzacy imgUrl");
+            if(intent.getStringExtra(getString(R.string.return_to_fragment)).equals(R.string.edit_profile_fragment));
+
+            //Set new profile picture
+            FirebaseMethods firebaseMethods = new FirebaseMethods(AccountSettingsActivity.this);
+            firebaseMethods.uploadNewPhoto(getString(R.string.profile_photo), null, 0,
+                    intent.getStringExtra(getString(R.string.selected_image )));
+
+        }
+
         if (intent.hasExtra(getString(R.string.calling_activity))) {
             Log.d(TAG, "getIncommingIntent: Otrzymujemy intent z " + getString(R.string.profile_activity));
             setViewPager(pagerAdapter.getFragmentNumber(getString(R.string.edit_profile_fragment)));
@@ -90,7 +104,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
         pagerAdapter.addFragment(new SignOutFragment(), getString(R.string.sign_out_fragment));
     }
 
-    private void setViewPager(int fragmentNumber) {
+    public void setViewPager(int fragmentNumber) {
         relativeLayout.setVisibility(View.GONE);
         Log.d(TAG, "setViewPager: nagigating forgragment number: " + fragmentNumber);
         viewPager.setAdapter(pagerAdapter);
