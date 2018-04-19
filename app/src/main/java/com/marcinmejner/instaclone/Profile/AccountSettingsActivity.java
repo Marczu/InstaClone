@@ -86,7 +86,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
 
 
             Log.d(TAG, "getIncommingIntent: nowy nadchodzacy imgUrl");
-            if (intent.getStringExtra(getString(R.string.return_to_fragment)).equals(R.string.edit_profile_fragment)) {
+            if (intent.getStringExtra(getString(R.string.return_to_fragment)).equals(getString(R.string.edit_profile_fragment))) {
 
                 if (intent.hasExtra(getString(R.string.selected_image))) {
                     //Set new profile picture
