@@ -69,7 +69,7 @@ public class NextActivity extends AppCompatActivity{
                 //Uploadujemy obrazek do Firebase
                 Toast.makeText(NextActivity.this, "Attempting to upload new Photo", Toast.LENGTH_SHORT).show();
                 String caption = mCaption.getText().toString();
-                mFirebaseMethods.uploadNewPhoto(getString(R.string.new_photo), caption, imageCount, imgUrl);
+                mFirebaseMethods.uploadNewPhoto(getString(R.string.new_photo), caption, imageCount, imgUrl, null);
             }
         });
 

@@ -2,6 +2,7 @@ package com.marcinmejner.instaclone.Profile;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -77,17 +78,31 @@ public class AccountSettingsActivity extends AppCompatActivity {
     private void getIncommingIntent() {
         Intent intent = getIntent();
 
-        //jesli mamy imageUrl doczepiony do extra, oznacza ze ostał wybrany z grallery/photo fragmentu
+        if (intent.hasExtra(getString(R.string.selected_image))
+                || intent.hasExtra(getString(R.string.selected_bitmap))) {
 
-        if(intent.hasExtra(getString(R.string.selected_image))){
+
+            //jesli mamy imageUrl doczepiony do extra, oznacza ze ostał wybrany z grallery/photo fragmentu
+
+
             Log.d(TAG, "getIncommingIntent: nowy nadchodzacy imgUrl");
-            if(intent.getStringExtra(getString(R.string.return_to_fragment)).equals(R.string.edit_profile_fragment));
+            if (intent.getStringExtra(getString(R.string.return_to_fragment)).equals(R.string.edit_profile_fragment)) {
 
-            //Set new profile picture
-            FirebaseMethods firebaseMethods = new FirebaseMethods(AccountSettingsActivity.this);
-            firebaseMethods.uploadNewPhoto(getString(R.string.profile_photo), null, 0,
-                    intent.getStringExtra(getString(R.string.selected_image )));
+                if (intent.hasExtra(getString(R.string.selected_image))) {
+                    //Set new profile picture
+                    FirebaseMethods firebaseMethods = new FirebaseMethods(AccountSettingsActivity.this);
+                    firebaseMethods.uploadNewPhoto(getString(R.string.profile_photo), null, 0,
+                            intent.getStringExtra(getString(R.string.selected_image)), null);
+                }
+                else if (intent.hasExtra(getString(R.string.selected_bitmap))) {
+                    //Set new profile picture
+                    FirebaseMethods firebaseMethods = new FirebaseMethods(AccountSettingsActivity.this);
+                    firebaseMethods.uploadNewPhoto(getString(R.string.profile_photo), null, 0,
+                            null, (Bitmap) intent.getParcelableExtra(getString(R.string.selected_bitmap)));
+                }
 
+
+            }
         }
 
         if (intent.hasExtra(getString(R.string.calling_activity))) {
@@ -140,7 +155,6 @@ public class AccountSettingsActivity extends AppCompatActivity {
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
         menuItem.setChecked(true);
     }
-
 
 
 }
