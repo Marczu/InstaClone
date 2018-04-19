@@ -25,6 +25,7 @@
     <string name="calling_activity">calling_activity</string>
     <string name="selected_image">selected_image</string>
     <string name="return_to_fragment">return_to_fragment</string>
+    <string name="selected_bitmap">selected_bitmap</string>
 
     <!--Photo Types-->
     <string name="new_photo">new_photo</string>
@@ -39,6 +40,7 @@
     <string name="string_open_camera">OPEN CAMERA</string>
     <string name="string_next">next</string>
     <string name="string_share">Share</string>
+
 
 
 </resources>

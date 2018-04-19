@@ -1,6 +1,7 @@
 package com.marcinmejner.instaclone.Share;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.marcinmejner.instaclone.Profile.AccountSettingsActivity;
 import com.marcinmejner.instaclone.R;
 import com.marcinmejner.instaclone.Utils.Permissions;
 
@@ -56,6 +58,15 @@ public class PhotoFragment extends Fragment{
         return view;
     }
 
+    private boolean isRootTask() {
+
+        if (((ShareActivity) getActivity()).getTask() == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -63,6 +74,28 @@ public class PhotoFragment extends Fragment{
         if(requestCode == CAMERA_REQUEST_CODE){
             Log.d(TAG, "onActivityResult: wychwycilismy photo");
             //nawigujemy do final share screen zeby opublikować photo
+
+            Bitmap bitmap;
+            bitmap = (Bitmap) data.getExtras().get("data");
+
+            if (isRootTask()) {
+
+
+
+            }else{
+                try{
+                    Intent intent = new Intent(getActivity(), AccountSettingsActivity.class);
+                    intent.putExtra(getString(R.string.selected_bitmap), bitmap);
+                    intent.putExtra(getString(R.string.return_to_fragment), getString(R.string.edit_profile_fragment));
+                    startActivity(intent);
+                    getActivity().finish();
+                    Log.d(TAG, "onActivityResult: " + bitmap);
+                }catch (NullPointerException e){
+                    Log.d(TAG, "onActivityResult: NullPointerException" + e.getMessage());
+                }
+
+            }
+
 
         }
     }
