@@ -80,7 +80,15 @@ public class PhotoFragment extends Fragment{
 
             if (isRootTask()) {
 
-
+                try{
+                    Log.d(TAG, "onActivityResult: przed przejsciem do next activity");
+                    Intent intent = new Intent(getActivity(), NextActivity.class);
+                    intent.putExtra(getString(R.string.selected_bitmap), bitmap);
+                    startActivity(intent);
+                    Log.d(TAG, "onActivityResult: " + bitmap);
+                }catch (NullPointerException e){
+                    Log.d(TAG, "onActivityResult: NullPointerException" + e.getMessage());
+                }
 
             }else{
                 try{

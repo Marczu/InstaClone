@@ -31,9 +31,12 @@ import com.marcinmejner.instaclone.R;
 import com.marcinmejner.instaclone.Utils.BottomNavigationViewHelper;
 import com.marcinmejner.instaclone.Utils.FirebaseMethods;
 import com.marcinmejner.instaclone.Utils.UniversalImageLoader;
+import com.marcinmejner.instaclone.models.Photo;
 import com.marcinmejner.instaclone.models.User;
 import com.marcinmejner.instaclone.models.UserAccountSettings;
 import com.marcinmejner.instaclone.models.UserSettings;
+
+import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -100,6 +103,13 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
         });
 
         return view;
+    }
+
+    private void setupGridView() {
+        Log.d(TAG, "setupGridView: ustawiamy image grid");
+
+        final ArrayList<Photo> photos = new ArrayList<>();
+        DatabaseReference reference = Fire
     }
 
     private void setProfileWidgets(UserSettings userSettings){

@@ -51,6 +51,8 @@ public class NextActivity extends AppCompatActivity{
         setContentView(R.layout.activity_next);
         mCaption = findViewById(R.id.caption);
 
+
+
         mFirebaseMethods = new FirebaseMethods(this);
 
         setupFirebaseAuth();
@@ -79,6 +81,7 @@ public class NextActivity extends AppCompatActivity{
 
                 } else if (intent.hasExtra(getString(R.string.selected_bitmap))) {
                     intent.getParcelableExtra(getString(R.string.selected_bitmap));
+                    mFirebaseMethods.uploadNewPhoto(getString(R.string.new_photo), caption, imageCount, null, bitmap);
 
                 }
 
@@ -102,7 +105,7 @@ public class NextActivity extends AppCompatActivity{
     * Otrzymujemy URL obrazka z intentu i wyświetlamy obrazek
     * */
     private void setImage(){
-        Intent intent = getIntent();
+        intent = getIntent();
         ImageView image = findViewById(R.id.imageShare);
 
         if (intent.hasExtra(getString(R.string.selected_image))) {
@@ -110,7 +113,7 @@ public class NextActivity extends AppCompatActivity{
             UniversalImageLoader.setImage(imgUrl, image, null, mAppend);
             Log.d(TAG, "setImage: got new image url" + imgUrl);
         } else if (intent.hasExtra(getString(R.string.selected_bitmap))) {
-            intent.getParcelableExtra(getString(R.string.selected_bitmap));
+           bitmap =  intent.getParcelableExtra(getString(R.string.selected_bitmap));
             Log.d(TAG, "setImage: got new bitmap");
             image.setImageBitmap(bitmap);
         }
