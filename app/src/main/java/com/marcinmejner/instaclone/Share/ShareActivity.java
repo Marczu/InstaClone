@@ -133,7 +133,7 @@ public class ShareActivity extends AppCompatActivity {
     private void setupNavigationNavigationView() {
         BottomNavigationViewEx bottomNavigationViewEx = findViewById(R.id.bottomNavViewBar);
         BottomNavigationViewHelper.setup(bottomNavigationViewEx);
-        BottomNavigationViewHelper.enableNavigation(mContex, bottomNavigationViewEx);
+        BottomNavigationViewHelper.enableNavigation(mContex, this, bottomNavigationViewEx);
         Menu menu = bottomNavigationViewEx.getMenu();
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
         menuItem.setChecked(true);

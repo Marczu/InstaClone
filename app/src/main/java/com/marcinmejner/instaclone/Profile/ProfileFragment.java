@@ -24,12 +24,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import com.marcinmejner.instaclone.Login.LoginActivity;
 import com.marcinmejner.instaclone.R;
 import com.marcinmejner.instaclone.Utils.BottomNavigationViewHelper;
 import com.marcinmejner.instaclone.Utils.FirebaseMethods;
+import com.marcinmejner.instaclone.Utils.GridImageAdapter;
 import com.marcinmejner.instaclone.Utils.UniversalImageLoader;
 import com.marcinmejner.instaclone.models.Photo;
 import com.marcinmejner.instaclone.models.User;
@@ -42,6 +44,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileFragment extends android.support.v4.app.Fragment {
     private static final String TAG = "ProfileFragment";
+    private static final int NUM_GRID_CULUMS = 3;
 
     //Firebase Auth
     private FirebaseAuth mAuth;
@@ -90,6 +93,8 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
         setupToolbar();
         setupFirebaseAuth();
 
+        setupGridView();
+
         TextView editProfile = view.findViewById(R.id.textEditProfile);
 
         editProfile.setOnClickListener(new View.OnClickListener() {
@@ -99,6 +104,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
                 Intent intent = new Intent(getActivity(), AccountSettingsActivity.class);
                 intent.putExtra(getString(R.string.calling_activity), getString(R.string.profile_activity));
                 startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });
 
@@ -109,7 +115,36 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
         Log.d(TAG, "setupGridView: ustawiamy image grid");
 
         final ArrayList<Photo> photos = new ArrayList<>();
-        DatabaseReference reference = Fire
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference
+                .child(getString(R.string.dbname_user_photos))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot singleSnapshot: dataSnapshot.getChildren()){
+                    photos.add(singleSnapshot.getValue(Photo.class));
+                }
+                //Ustawiamy image grid
+                int gridWidth = getResources().getDisplayMetrics().widthPixels;
+                int imageWidth = gridWidth / NUM_GRID_CULUMS;
+                gridView.setColumnWidth(imageWidth);
+
+                ArrayList<String> imageUrls = new ArrayList<>();
+                for (int i = 0; i < photos.size(); i++) {
+                    imageUrls.add(photos.get(i).getImage_path());
+                }
+                GridImageAdapter gridImageAdapter = new GridImageAdapter(getActivity(), R.layout.layout_grid_imageview,
+                        "", imageUrls);
+                gridView.setAdapter(gridImageAdapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d(TAG, "onCancelled: querry canceled");
+            }
+        });
     }
 
     private void setProfileWidgets(UserSettings userSettings){
@@ -143,6 +178,8 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
                 Log.d(TAG, "onClick: navigating to account settings");
                 Intent intent = new Intent(mContex, AccountSettingsActivity.class);
                 startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+
             }
         });
     }
@@ -150,7 +187,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
     /*Ustawianie BottomNavView*/
     private void setupNavigationNavigationView() {
         BottomNavigationViewHelper.setup(bottomNavigationViewEx);
-        BottomNavigationViewHelper.enableNavigation(mContex, bottomNavigationViewEx);
+        BottomNavigationViewHelper.enableNavigation(mContex, getActivity(), bottomNavigationViewEx);
         Menu menu = bottomNavigationViewEx.getMenu();
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
         menuItem.setChecked(true);
