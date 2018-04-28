@@ -83,7 +83,7 @@ public class GalleryFragment extends Fragment {
                     Intent intent = new Intent(getActivity(), NextActivity.class);
                     intent.putExtra(getString(R.string.selected_image), mSelectedImage);
                     startActivity(intent);
-                }else{
+                } else {
                     Intent intent = new Intent(getActivity(), AccountSettingsActivity.class);
                     intent.putExtra(getString(R.string.selected_image), mSelectedImage);
                     intent.putExtra(getString(R.string.return_to_fragment), getString(R.string.edit_profile_fragment));
@@ -159,9 +159,15 @@ public class GalleryFragment extends Fragment {
         gridView.setAdapter(adapter);
 
         //ustawiamy pierwszy obrazek do wyświetlenia po tym jak aktivity jest inflated
+        try {
+            if(imgURLs.size() > 0) {
+                setImage(imgURLs.get(0), galleryImage, mAppend);
+                mSelectedImage = imgURLs.get(0);
+            }
+        }catch (ArrayIndexOutOfBoundsException e){
+            Log.e(TAG, "setupGridView: ArrayIndexOutOfBoundsException" + e.getMessage() );
+        }
 
-        setImage(imgURLs.get(0), galleryImage, mAppend);
-        mSelectedImage = imgURLs.get(0);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
