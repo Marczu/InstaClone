@@ -1,6 +1,9 @@
 package com.marcinmejner.instaclone.models;
 
-public class Photo {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Photo implements Parcelable{
 
     private String caption;
     private String date_created;
@@ -9,7 +12,7 @@ public class Photo {
     private String user_id;
     private String tags;
 
-    public Photo() {
+    public Photo()  {
     }
 
     public Photo(String caption, String date_created, String image_path, String photo_id, String user_id, String tags) {
@@ -79,5 +82,15 @@ public class Photo {
                 ", user_id='" + user_id + '\'' +
                 ", tags='" + tags + '\'' +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
     }
 }

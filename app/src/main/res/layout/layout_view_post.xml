@@ -156,6 +156,6 @@
 
     </ScrollView>
 
-    <include layout="@layout/layout_bootom_navigation_view"
+    <include layout="@layout/layout_bootom_navigation_view"/>
 
 </RelativeLayout>
