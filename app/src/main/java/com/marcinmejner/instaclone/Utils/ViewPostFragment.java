@@ -1,13 +1,15 @@
-package com.marcinmejner.instaclone;
+package com.marcinmejner.instaclone.Utils;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -23,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
+import com.marcinmejner.instaclone.R;
 import com.marcinmejner.instaclone.Utils.BottomNavigationViewHelper;
 import com.marcinmejner.instaclone.Utils.FirebaseMethods;
 import com.marcinmejner.instaclone.Utils.GridImageAdapter;
@@ -61,6 +64,8 @@ public class ViewPostFragment extends Fragment {
     private String photoUsername = "";
     private String profilePhotoUrl = "";
     private UserAccountSettings mUserAccountSettings;
+    private GestureDetector mGestureDetector;
+    private Heart mHeart;
 
 
     public ViewPostFragment() {
@@ -85,6 +90,12 @@ public class ViewPostFragment extends Fragment {
         mHeartWhite = view.findViewById(R.id.image_heart);
         mProfileImage = view.findViewById(R.id.profile_photo);
 
+
+        mHeartRed.setVisibility(View.GONE);
+        mHeartWhite.setVisibility(View.VISIBLE);
+        mHeart = new Heart(mHeartWhite, mHeartRed);
+        mGestureDetector = new GestureDetector(getActivity(), new GestureListener());
+
         try {
             mPhoto = getPhotoFromBundle();
             UniversalImageLoader.setImage(mPhoto.getImage_path(), mPostImage, null, "");
@@ -98,10 +109,48 @@ public class ViewPostFragment extends Fragment {
         setupNavigationNavigationView();
         getPhotoDetails();
 //        setupWidgets();
+
+        testToggle();
+
         return view;
     }
 
-    private void getPhotoDetails(){
+    private void testToggle() {
+        mHeartRed.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                Log.d(TAG, "onTouch: red heart touch detected");
+                return mGestureDetector.onTouchEvent(motionEvent);
+            }
+        });
+
+        mHeartWhite.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                Log.d(TAG, "onTouch: white heart touch detected");
+
+                return mGestureDetector.onTouchEvent(motionEvent);
+            }
+        });
+    }
+
+    public class GestureListener extends GestureDetector.SimpleOnGestureListener {
+
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return true;
+        }
+
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+
+            Log.d(TAG, "onDoubleTap: double tap detected");
+            mHeart.toggleLike();
+            return true;
+        }
+    }
+
+    private void getPhotoDetails() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         Query query = reference
                 .child(getString(R.string.dbname_user_account_settings))
@@ -111,7 +160,7 @@ public class ViewPostFragment extends Fragment {
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot singleSnapshot: dataSnapshot.getChildren()){
+                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
                     mUserAccountSettings = singleSnapshot.getValue(UserAccountSettings.class);
                 }
                 setupWidgets();
@@ -209,7 +258,7 @@ public class ViewPostFragment extends Fragment {
     /*
       ------------------------------FIREBASE -----------------------------------------
   */
-    private void setupFirebaseAuth(){
+    private void setupFirebaseAuth() {
         Log.d(TAG, "setupFirebaseAuth: setting up firebase");
 
         mAuth = FirebaseAuth.getInstance();
@@ -223,9 +272,9 @@ public class ViewPostFragment extends Fragment {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
 
 
-                if(user!=null){
+                if (user != null) {
                     Log.d(TAG, "user signed_in, with userUID:  " + user.getUid());
-                }else{
+                } else {
                     Log.d(TAG, "onAuthStateChanged: user signed_out");
                 }
             }
@@ -242,7 +291,7 @@ public class ViewPostFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        if(mAuthStateListener != null){
+        if (mAuthStateListener != null) {
             mAuth.removeAuthStateListener(mAuthStateListener);
         }
     }

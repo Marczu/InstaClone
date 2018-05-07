@@ -1,32 +1,16 @@
 package com.marcinmejner.instaclone.Profile;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Toolbar;
 
-import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import com.marcinmejner.instaclone.R;
-import com.marcinmejner.instaclone.Utils.BottomNavigationViewHelper;
-import com.marcinmejner.instaclone.Utils.GridImageAdapter;
-import com.marcinmejner.instaclone.Utils.UniversalImageLoader;
-import com.marcinmejner.instaclone.ViewPostFragment;
+import com.marcinmejner.instaclone.Utils.ViewPostFragment;
 import com.marcinmejner.instaclone.models.Photo;
-import com.orhanobut.logger.AndroidLogAdapter;
-
-import java.util.ArrayList;
-import java.util.logging.Logger;
 
 /**
  * Created by Marc on 15.03.2018.
@@ -55,7 +39,6 @@ public class ProfileActivity extends AppCompatActivity implements ProfileFragmen
 
     private Context mContex = ProfileActivity.this;
 
-
     private ProgressBar progressBar;
     ImageView profilePhoto;
 
@@ -63,7 +46,6 @@ public class ProfileActivity extends AppCompatActivity implements ProfileFragmen
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
 
         init();
     }
@@ -77,13 +59,5 @@ public class ProfileActivity extends AppCompatActivity implements ProfileFragmen
         transaction.replace(R.id.container, profileFragment);
         transaction.addToBackStack(getString(R.string.profile_fragment));
         transaction.commit();
-
-
     }
-
-
-
-
-
-
 }
