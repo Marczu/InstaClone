@@ -57,7 +57,7 @@ public class ViewPostFragment extends Fragment {
     //widgets
     private SquareImageView mPostImage;
     private BottomNavigationViewEx bottomNavigationViewEx;
-    private TextView mBackLabel, mCaption, mUsername, mTimeStamp;
+    private TextView mBackLabel, mCaption, mUsername, mTimeStamp, mLikes;
     private ImageView mBackArrow, mEllipses, mHeartRed, mHeartWhite, mProfileImage;
 
     //vars
@@ -70,6 +70,7 @@ public class ViewPostFragment extends Fragment {
     private Heart mHeart;
     private Boolean mLikedByCurrentUser;
     private StringBuilder mUsers;
+    private String mLikesString = "";
 
 
     public ViewPostFragment() {
@@ -93,6 +94,7 @@ public class ViewPostFragment extends Fragment {
         mHeartRed = view.findViewById(R.id.image_heart_red);
         mHeartWhite = view.findViewById(R.id.image_heart);
         mProfileImage = view.findViewById(R.id.profile_photo);
+        mLikes = view.findViewById(R.id.image_likes);
 
 
         mHeartRed.setVisibility(View.GONE);
@@ -177,18 +179,25 @@ public class ViewPostFragment extends Fragment {
                             }
                             int lenght = splitUsers.length;
                             if (lenght == 1) {
-
-                            } else if (lenght == 2) {
-
-                            } else if (lenght == 3) {
-
-                            } else if (lenght == 4) {
-
-                            }else if (lenght > 4){
+                                mLikesString = "Liked by " + splitUsers[0];
+                            }
+                            else if (lenght == 2) {
+                                mLikesString = "Liked by " + splitUsers[0] + " and " + splitUsers[1];
+                            }
+                            else if (lenght == 3) {
+                                mLikesString = "Liked by " + splitUsers[0] + ", " + splitUsers[1] +
+                                " and " + splitUsers[2];
 
                             }
-
-
+                            else if (lenght == 4) {
+                                mLikesString = "Liked by " + splitUsers[0] + ", " + splitUsers[1] +
+                                        ", " + splitUsers[2] + " and " + splitUsers[3];
+                            }
+                            else if (lenght > 4){
+                                mLikesString = "Liked by " + splitUsers[0] + ", " + splitUsers[1] +
+                                        ", " + splitUsers[2] + " and " + (splitUsers.length - 3) + " others";
+                            }
+                            setupWidgets();
                         }
 
                         @Override
