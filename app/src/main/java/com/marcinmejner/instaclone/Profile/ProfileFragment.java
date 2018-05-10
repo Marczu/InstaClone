@@ -244,6 +244,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
         menuItem.setChecked(true);
     }
 
+
     /*
         ------------------------------FIREBASE -----------------------------------------
     */

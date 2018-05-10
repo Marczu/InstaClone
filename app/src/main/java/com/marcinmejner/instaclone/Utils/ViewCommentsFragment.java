@@ -12,7 +12,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,11 +25,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import com.marcinmejner.instaclone.R;
-import com.marcinmejner.instaclone.Utils.BottomNavigationViewHelper;
-import com.marcinmejner.instaclone.Utils.FirebaseMethods;
-import com.marcinmejner.instaclone.Utils.GridImageAdapter;
-import com.marcinmejner.instaclone.Utils.SquareImageView;
-import com.marcinmejner.instaclone.Utils.UniversalImageLoader;
 import com.marcinmejner.instaclone.models.Like;
 import com.marcinmejner.instaclone.models.Photo;
 import com.marcinmejner.instaclone.models.User;
@@ -38,13 +32,12 @@ import com.marcinmejner.instaclone.models.UserAccountSettings;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-public class ViewPostFragment extends Fragment {
+public class ViewCommentsFragment extends Fragment {
     private static final String TAG = "ViewPostFragment";
 
     //Firebase Auth
@@ -73,7 +66,7 @@ public class ViewPostFragment extends Fragment {
     private String mLikesString = "";
 
 
-    public ViewPostFragment() {
+    public ViewCommentsFragment() {
         super();
         setArguments(new Bundle());
     }
