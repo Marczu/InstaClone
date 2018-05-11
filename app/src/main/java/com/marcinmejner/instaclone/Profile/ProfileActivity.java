@@ -1,5 +1,6 @@
 package com.marcinmejner.instaclone.Profile;
 
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.marcinmejner.instaclone.R;
+import com.marcinmejner.instaclone.Utils.ViewCommentsFragment;
 import com.marcinmejner.instaclone.Utils.ViewPostFragment;
 import com.marcinmejner.instaclone.models.Photo;
 
@@ -16,8 +18,24 @@ import com.marcinmejner.instaclone.models.Photo;
  * Created by Marc on 15.03.2018.
  */
 
-public class ProfileActivity extends AppCompatActivity implements ProfileFragment.OnGridImageSelectedListener {
+public class ProfileActivity extends AppCompatActivity implements
+        ProfileFragment.OnGridImageSelectedListener,
+        ViewPostFragment.OnCommentThreadSelectedListener{
     private static final String TAG = "ProfileActivity";
+
+    @Override
+    public void onCommentThreadSelectedListener(Photo photo) {
+        Log.d(TAG, "onCommentThreadSelectedListener: selected comment thread");
+        ViewCommentsFragment fragment = new ViewCommentsFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(getString(R.string.photo), photo);
+        fragment.setArguments(args);
+
+        android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.container, fragment);
+        transaction.addToBackStack(getString(R.string.view_comment_fragment));
+        transaction.commit();
+    }
 
     @Override
     public void onGridImageSelected(Photo photo, int activityNumber) {
@@ -60,4 +78,6 @@ public class ProfileActivity extends AppCompatActivity implements ProfileFragmen
         transaction.addToBackStack(getString(R.string.profile_fragment));
         transaction.commit();
     }
+
+
 }

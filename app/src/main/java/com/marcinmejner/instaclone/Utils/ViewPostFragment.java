@@ -1,5 +1,6 @@
 package com.marcinmejner.instaclone.Utils;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -47,6 +48,12 @@ import java.util.TimeZone;
 public class ViewPostFragment extends Fragment {
     private static final String TAG = "ViewPostFragment";
 
+    public interface OnCommentThreadSelectedListener {
+        void onCommentThreadSelectedListener(Photo photo);
+    }
+
+    OnCommentThreadSelectedListener mOnCommentThreadSelectedListener;
+
     //Firebase Auth
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
@@ -58,7 +65,7 @@ public class ViewPostFragment extends Fragment {
     private SquareImageView mPostImage;
     private BottomNavigationViewEx bottomNavigationViewEx;
     private TextView mBackLabel, mCaption, mUsername, mTimeStamp, mLikes;
-    private ImageView mBackArrow, mEllipses, mHeartRed, mHeartWhite, mProfileImage;
+    private ImageView mBackArrow, mEllipses, mHeartRed, mHeartWhite, mProfileImage, mComment;
 
     //vars
     private Photo mPhoto;
@@ -96,6 +103,7 @@ public class ViewPostFragment extends Fragment {
         mHeartWhite = view.findViewById(R.id.image_heart);
         mProfileImage = view.findViewById(R.id.profile_photo);
         mLikes = view.findViewById(R.id.image_likes);
+        mComment = view.findViewById(R.id.speach_bubble);
 
         mHeart = new Heart(mHeartWhite, mHeartRed);
         mGestureDetector = new GestureDetector(getActivity(), new GestureListener());
@@ -114,10 +122,19 @@ public class ViewPostFragment extends Fragment {
         setupFirebaseAuth();
         setupNavigationNavigationView();
 
-
         return view;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            mOnCommentThreadSelectedListener = (OnCommentThreadSelectedListener) getActivity();
+        } catch (ClassCastException e) {
+            Log.e(TAG, "onAttach: ClassCastException" + e.getMessage());
+        }
+    }
 
     private void getLikesString() {
         Log.d(TAG, "getLikesString: getting likes String");
@@ -221,7 +238,7 @@ public class ViewPostFragment extends Fragment {
                         //Case 1 user already liked photo
                         if (mLikedByCurrentUser &&
                                 singleSnapshot.getValue(Like.class).getUser_id()
-                                .equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                                        .equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                             myRef.child(getString(R.string.dbname_photos))
                                     .child(mPhoto.getPhoto_id())
                                     .child(getString(R.string.field_likes))
@@ -239,13 +256,13 @@ public class ViewPostFragment extends Fragment {
                             getLikesString();
                         }
                         //Case 2 user has not liked the photo
-                        else if (!mLikedByCurrentUser){
+                        else if (!mLikedByCurrentUser) {
                             //add new like
                             addNewLike();
                             break;
                         }
                     }
-                    if(!dataSnapshot.exists()){
+                    if (!dataSnapshot.exists()) {
                         //add new like
                         addNewLike();
                     }
@@ -261,7 +278,7 @@ public class ViewPostFragment extends Fragment {
         }
     }
 
-    private void addNewLike(){
+    private void addNewLike() {
         Log.d(TAG, "addNewLike: adding new like");
 
         String newLikeID = myRef.push().getKey();
@@ -321,6 +338,22 @@ public class ViewPostFragment extends Fragment {
         mUsername.setText(mUserAccountSettings.getUsername());
         mLikes.setText(mLikesString);
         mCaption.setText(mPhoto.getCaption());
+
+        mBackArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: navigating back");
+                getActivity().getSupportFragmentManager().popBackStack();
+            }
+        });
+
+        mComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: navigating back");
+                mOnCommentThreadSelectedListener.onCommentThreadSelectedListener(mPhoto);
+            }
+        });
 
         if (mLikedByCurrentUser) {
             mHeartWhite.setVisibility(View.GONE);
