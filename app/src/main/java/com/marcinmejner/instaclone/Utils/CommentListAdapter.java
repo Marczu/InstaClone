@@ -104,8 +104,6 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
                     imageLoader.displayImage(singleSnapshot.getValue(UserAccountSettings.class).getProfile_photo(),
                             holder.profileImage);
                 }
-
-
             }
 
             @Override
@@ -113,6 +111,16 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
                 Log.d(TAG, "onCancelled: querry canceled");
             }
         });
+
+        try{
+            if(position == 0){
+                holder.like.setVisibility(View.GONE);
+                holder.likes.setVisibility(View.GONE);
+                holder.reply.setVisibility(View.GONE);
+            }
+        }catch (NullPointerException e){
+            Log.e(TAG, "getView: NullPointerException" + e.getMessage());
+        }
 
 
         return convertView;
