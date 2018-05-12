@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -19,16 +20,25 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.marcinmejner.instaclone.R;
 import com.marcinmejner.instaclone.models.Comment;
+import com.marcinmejner.instaclone.models.Like;
 import com.marcinmejner.instaclone.models.Photo;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 
 
@@ -67,20 +77,18 @@ public class ViewCommentsFragment extends Fragment {
         mListView = view.findViewById(R.id.listView);
         mComments = new ArrayList<>();
 
-        setupFirebaseAuth();
-
         try {
             mPhoto = getPhotoFromBundle();
+            setupFirebaseAuth();
         } catch (NullPointerException e) {
             Log.d(TAG, "onCreateView: NullPointerException" + e.getMessage());
         }
 
-        Comment firstComment = new Comment();
-        firstComment.setComment(mPhoto.getCaption());
-        firstComment.setUser_id(mPhoto.getUser_id());
-        firstComment.setDate_created(mPhoto.getDate_created());
+        return view;
+    }
 
-        mComments.add(firstComment);
+    private void setupWidgets(){
+
         CommentListAdapter adapter = new CommentListAdapter(getActivity(),
                 R.layout.layout_comment, mComments);
         mListView.setAdapter(adapter);
@@ -101,9 +109,6 @@ public class ViewCommentsFragment extends Fragment {
 
             }
         });
-
-
-        return view;
     }
 
     private void closeKeyboard() {
@@ -187,6 +192,96 @@ public class ViewCommentsFragment extends Fragment {
                 }
             }
         };
+
+        myRef.child(getString(R.string.dbname_photos))
+                .child(mPhoto.getPhoto_id())
+                .child(getString(R.string.field_comments))
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                        Query query = myRef
+                                .child(getString(R.string.dbname_photos))
+                                .orderByChild(getString(R.string.field_photo_id))
+                                .equalTo(mPhoto.getPhoto_id());
+
+                        query.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+
+                                    Photo photo = new Photo();
+                                    Map<String, Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
+
+                                    photo.setCaption(objectMap.get(getString(R.string.field_caption)).toString());
+                                    photo.setTags(objectMap.get(getString(R.string.field_tags)).toString());
+                                    photo.setPhoto_id(objectMap.get(getString(R.string.field_photo_id)).toString());
+                                    photo.setUser_id(objectMap.get(getString(R.string.field_user_id)).toString());
+                                    photo.setDate_created(objectMap.get(getString(R.string.field_date_created)).toString());
+                                    photo.setImage_path(objectMap.get(getString(R.string.field_image_path)).toString());
+
+                                    mComments.clear();
+                                    Comment firstComment = new Comment();
+                                    firstComment.setComment(mPhoto.getCaption());
+                                    firstComment.setUser_id(mPhoto.getUser_id());
+                                    firstComment.setDate_created(mPhoto.getDate_created());
+
+                                    mComments.add(firstComment);
+
+                                    for (DataSnapshot dSnapshot : singleSnapshot
+                                            .child(getString(R.string.field_comments)).getChildren()) {
+                                        Comment comment = new Comment();
+                                        comment.setUser_id(dSnapshot.getValue(Comment.class).getUser_id());
+                                        comment.setComment(dSnapshot.getValue(Comment.class).getComment());
+                                        comment.setDate_created(dSnapshot.getValue(Comment.class).getDate_created());
+                                        mComments.add(comment);
+                                    }
+
+                                    photo.setComments(mComments);
+
+                                    mPhoto = photo;
+
+                                    setupWidgets();
+
+
+//                    List<Like> likesList = new ArrayList<>();
+//                    for(DataSnapshot dSnapshot : singleSnapshot
+//                            .child(getString(R.string.field_likes)).getChildren()){
+//                        Like like = new Like();
+//                        like.setUser_id(dSnapshot.getValue(Like.class).getUser_id());
+//                        likesList.add(like);
+//                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Log.d(TAG, "onCancelled: querry canceled");
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
 
     }
 
