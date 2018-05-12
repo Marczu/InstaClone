@@ -54,6 +54,11 @@ public class ViewPostFragment extends Fragment {
 
     OnCommentThreadSelectedListener mOnCommentThreadSelectedListener;
 
+    public ViewPostFragment() {
+        super();
+        setArguments(new Bundle());
+    }
+
     //Firebase Auth
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
@@ -64,7 +69,7 @@ public class ViewPostFragment extends Fragment {
     //widgets
     private SquareImageView mPostImage;
     private BottomNavigationViewEx bottomNavigationViewEx;
-    private TextView mBackLabel, mCaption, mUsername, mTimeStamp, mLikes;
+    private TextView mBackLabel, mCaption, mUsername, mTimeStamp, mLikes, mComments;
     private ImageView mBackArrow, mEllipses, mHeartRed, mHeartWhite, mProfileImage, mComment;
 
     //vars
@@ -80,10 +85,7 @@ public class ViewPostFragment extends Fragment {
     private String mLikesString = "";
 
 
-    public ViewPostFragment() {
-        super();
-        setArguments(new Bundle());
-    }
+
 
     @Nullable
     @Override
@@ -104,12 +106,14 @@ public class ViewPostFragment extends Fragment {
         mProfileImage = view.findViewById(R.id.profile_photo);
         mLikes = view.findViewById(R.id.image_likes);
         mComment = view.findViewById(R.id.speach_bubble);
+        mComments = view.findViewById(R.id.image_comments_link);
 
         mHeart = new Heart(mHeartWhite, mHeartRed);
         mGestureDetector = new GestureDetector(getActivity(), new GestureListener());
 
         try {
-            mPhoto = getPhotoFromBundle();
+//            mPhoto = getPhotoFromBundle();
+
             UniversalImageLoader.setImage(mPhoto.getImage_path(), mPostImage, null, "");
             mActivityNumber = getActivityFromBundle();
             getPhotoDetails();
@@ -339,9 +343,22 @@ public class ViewPostFragment extends Fragment {
         mLikes.setText(mLikesString);
         mCaption.setText(mPhoto.getCaption());
 
-        if(mPhoto.getComments().size() > 0 ){
 
+        if( mPhoto.getComments().size() > 0){
+
+                mComments.setText("View all " + mPhoto.getComments().size() + " comments");
         }
+        else{
+            mComments.setText("");
+        }
+
+        mComments.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: navitating to comments thread");
+                mOnCommentThreadSelectedListener.onCommentThreadSelectedListener(mPhoto);
+            }
+        });
 
         mBackArrow.setOnClickListener(new View.OnClickListener() {
             @Override
