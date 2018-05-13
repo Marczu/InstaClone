@@ -19,7 +19,7 @@
                 <TextView
                     android:id="@+id/username"
                     android:layout_centerVertical="true"
-                    android:text="Mar"
+                    android:text=""
                     android:textSize="20sp"
                     android:textColor="@color/black"
                     android:layout_marginStart="15dp"
