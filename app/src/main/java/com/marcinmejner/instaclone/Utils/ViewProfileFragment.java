@@ -119,6 +119,8 @@ public class ViewProfileFragment extends android.support.v4.app.Fragment {
 
         setupFirebaseAuth();
 
+        isFollowing();
+
         /*Following user*/
         mFollow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -282,13 +284,9 @@ public class ViewProfileFragment extends android.support.v4.app.Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
-                    Log.d(TAG, "onDataChange: found user" + singleSnapshot.getValue(UserAccountSettings.class).toString());
+                    Log.d(TAG, "onDataChange: found user" + singleSnapshot.getValue());
 
-                    UserSettings settings = new UserSettings();
-                    settings.setUser(mUser);
-                    settings.setSettings(singleSnapshot.getValue(UserAccountSettings.class));
-                    setProfileWidgets(settings);
-
+                    setFollowing();
 
                 }
             }
