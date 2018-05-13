@@ -97,6 +97,7 @@ public class HomeActivity extends AppCompatActivity {
     }
     private void setupFirebaseAuth(){
         mAuth = FirebaseAuth.getInstance();
+//        mAuth.signOut();
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
