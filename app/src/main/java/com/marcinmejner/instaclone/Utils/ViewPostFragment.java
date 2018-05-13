@@ -180,6 +180,14 @@ public class ViewPostFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if(isAdded()){
+            init();
+        }
+    }
+
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
 
