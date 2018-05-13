@@ -120,7 +120,7 @@ public class GalleryFragment extends Fragment {
         ArrayList<String> directoryNames = new ArrayList<>();
         for (int i = 0; i < directories.size(); i++) {
             int index = directories.get(i).lastIndexOf("/");
-            String string = directories.get(i).substring(index);
+            String string = directories.get(i).substring(index).replace("/", "");
             directoryNames.add(string);
         }
 
