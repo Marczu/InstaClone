@@ -20,7 +20,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.marcinmejner.instaclone.Home.HomeActivity;
 import com.marcinmejner.instaclone.R;
+import com.marcinmejner.instaclone.models.Comment;
 import com.marcinmejner.instaclone.models.Like;
 import com.marcinmejner.instaclone.models.Photo;
 import com.marcinmejner.instaclone.models.User;
@@ -75,7 +77,7 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
 
     @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+    public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
 
         final ViewHolder holder;
@@ -103,6 +105,25 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
+
+        //get the current users username (need for checking like string)
+        getCurrentUsername();
+
+        //get like string
+        getLikesString(holder);
+
+        //set the comment
+        List<Comment> comments = getItem(position).getComments();
+        holder.comments.setText("View all " + comments.size() + " comments");
+        holder.comment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick:  loading thread for " + getItem(position).getPhoto_id());
+                ((HomeActivity)mContex)
+            }
+        });
+
+
 
 
         return convertView;
@@ -201,6 +222,34 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
 
         holder.heart.toggleLike();
         getLikesString(holder);
+    }
+
+    private void getCurrentUsername(){
+        Log.d(TAG, "instance initializer: retreving user account settings");
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference
+                .child(mContex.getString(R.string.dbname_users))
+                .orderByChild(mContex.getString(R.string.field_user_id))
+                .equalTo(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+
+                  currentUsename = singleSnapshot.getValue(UserAccountSettings.class).getUsername();
+
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     private void getLikesString(final ViewHolder holder) {

@@ -19,6 +19,9 @@ import com.marcinmejner.instaclone.R;
 import com.marcinmejner.instaclone.Utils.BottomNavigationViewHelper;
 import com.marcinmejner.instaclone.Utils.SectionPagerAdapter;
 import com.marcinmejner.instaclone.Utils.UniversalImageLoader;
+import com.marcinmejner.instaclone.Utils.ViewCommentsFragment;
+import com.marcinmejner.instaclone.models.Photo;
+import com.marcinmejner.instaclone.models.UserAccountSettings;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class HomeActivity extends AppCompatActivity {
@@ -44,7 +47,13 @@ public class HomeActivity extends AppCompatActivity {
         setupViewPager();
     }
 
+    public void onCommentThreadSelected(Photo photo, UserAccountSettings settings){
+        Log.d(TAG, "onCommentThreadSelected: selected a comment thread");
 
+        ViewCommentsFragment fragment = new ViewCommentsFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(getString(R.string.photo), photo);
+    }
 
     private void initImageLoader(){
         UniversalImageLoader universalImageLoader = new UniversalImageLoader(mContex);
