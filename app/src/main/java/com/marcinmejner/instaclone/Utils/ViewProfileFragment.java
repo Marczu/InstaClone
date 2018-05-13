@@ -16,6 +16,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,6 +33,7 @@ import com.marcinmejner.instaclone.R;
 import com.marcinmejner.instaclone.models.Comment;
 import com.marcinmejner.instaclone.models.Like;
 import com.marcinmejner.instaclone.models.Photo;
+import com.marcinmejner.instaclone.models.User;
 import com.marcinmejner.instaclone.models.UserAccountSettings;
 import com.marcinmejner.instaclone.models.UserSettings;
 
@@ -45,7 +47,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ViewProfileFragment extends android.support.v4.app.Fragment {
     private static final String TAG = "ProfileFragment";
 
-    public interface OnGridImageSelectedListener{
+    public interface OnGridImageSelectedListener {
         void onGridImageSelected(Photo photo, int activityNumber);
     }
 
@@ -59,17 +61,22 @@ public class ViewProfileFragment extends android.support.v4.app.Fragment {
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference myRef;
-    private FirebaseMethods mFirebaseMethods;
 
-    private TextView mPosts, mFollowers, mFollowing, mDisplayName, mUsername, mWebsite, mDescription;
+    //widgets
+    private TextView mPosts, mFollowers, mFollowing, mDisplayName, mUsername, mWebsite, mDescription,
+            mFollow, mUnfollow;
     private ProgressBar mProgressbar;
     private CircleImageView mProfilePhoto;
     private GridView gridView;
     private android.support.v7.widget.Toolbar toolbar;
     private ImageView profileMenu;
     private BottomNavigationViewEx bottomNavigationViewEx;
-
     private Context mContex;
+    private TextView editProfile;
+
+    //vars
+    private User mUser;
+
 
     @Nullable
     @Override
@@ -91,17 +98,76 @@ public class ViewProfileFragment extends android.support.v4.app.Fragment {
         toolbar = view.findViewById(R.id.profileToolbar);
         profileMenu = view.findViewById(R.id.profileMenu);
         bottomNavigationViewEx = view.findViewById(R.id.bottomNavViewBar);
+        mFollow = view.findViewById(R.id.follow);
+        mUnfollow = view.findViewById(R.id.unfollow);
+        editProfile = view.findViewById(R.id.textEditProfile);
+
         mContex = getActivity();
 
-        mFirebaseMethods = new FirebaseMethods(getActivity());
+
+        try {
+            mUser = getUserFromBundle();
+            init();
+        } catch (NullPointerException e) {
+            Log.e(TAG, "onCreateView: NullPointerException " + e.getMessage());
+            Toast.makeText(mContex, "Something went wrong", Toast.LENGTH_SHORT).show();
+            getActivity().getSupportFragmentManager().popBackStack();
+        }
 
         setupNavigationNavigationView();
         setupToolbar();
+
         setupFirebaseAuth();
 
-        setupGridView();
+        /*Following user*/
+        mFollow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: now following : " + mUser.getUsername());
 
-        TextView editProfile = view.findViewById(R.id.textEditProfile);
+                FirebaseDatabase.getInstance().getReference()
+                        .child(getString(R.string.dbname_following))
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(mUser.getUser_id())
+                        .child(getString(R.string.field_user_id))
+                        .setValue(mUser.getUser_id());
+
+                FirebaseDatabase.getInstance().getReference()
+                        .child(getString(R.string.dbname_followers))
+                        .child(mUser.getUser_id())
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(getString(R.string.field_user_id))
+                        .setValue(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                setFollowing();
+            }
+        });
+
+        /*UnFollowing user*/
+        mUnfollow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: unfollowing user : " + mUser.getUsername());
+
+                FirebaseDatabase.getInstance().getReference()
+                        .child(getString(R.string.dbname_following))
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(mUser.getUser_id())
+                        .removeValue();
+
+                FirebaseDatabase.getInstance().getReference()
+                        .child(getString(R.string.dbname_followers))
+                        .child(mUser.getUser_id())
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .removeValue();
+
+                setUnFollowing();
+            }
+        });
+
+//        setupGridView();
+
+
 
         editProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,34 +183,49 @@ public class ViewProfileFragment extends android.support.v4.app.Fragment {
         return view;
     }
 
-    @Override
-    public void onAttach(Context context) {
-        try{
-            onGridImageSelectedListener = (OnGridImageSelectedListener) getActivity();
-        }catch (ClassCastException e){
-            Log.e(TAG, "onAttach: ClassCastException" +  e.getMessage());
+    private void init() {
 
-        }
-
-        super.onAttach(context);
-    }
-
-    private void setupGridView() {
-        Log.d(TAG, "setupGridView: ustawiamy image grid");
-
-        final ArrayList<Photo> photos = new ArrayList<>();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        Query query = reference
-                .child(getString(R.string.dbname_user_photos))
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        //set profile widgets
+        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference();
+        Query query1 = reference1
+                .child(getString(R.string.dbname_user_account_settings))
+                .orderByChild(getString(R.string.field_user_id))
+                .equalTo(mUser.getUser_id());
+        query1.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot singleSnapshot: dataSnapshot.getChildren()){
+                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+                    Log.d(TAG, "onDataChange: found user" + singleSnapshot.getValue(UserAccountSettings.class).toString());
+
+                    UserSettings settings = new UserSettings();
+                    settings.setUser(mUser);
+                    settings.setSettings(singleSnapshot.getValue(UserAccountSettings.class));
+                    setProfileWidgets(settings);
+
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        //get users profile photos
+        DatabaseReference reference2 = FirebaseDatabase.getInstance().getReference();
+        Query query2 = reference2
+                .child(getString(R.string.dbname_user_photos))
+                .child(mUser.getUser_id());
+
+        query2.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                ArrayList<Photo> photos = new ArrayList<>();
+                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
 
                     Photo photo = new Photo();
-                    Map<String, Object> objectMap = (HashMap<String , Object>) singleSnapshot.getValue();
+                    Map<String, Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
 
                     photo.setCaption(objectMap.get(getString(R.string.field_caption)).toString());
                     photo.setTags(objectMap.get(getString(R.string.field_tags)).toString());
@@ -166,36 +247,17 @@ public class ViewProfileFragment extends android.support.v4.app.Fragment {
                     photo.setComments(comments);
 
                     List<Like> likesList = new ArrayList<>();
-                    for(DataSnapshot dSnapshot : singleSnapshot
-                            .child(getString(R.string.field_likes)).getChildren()){
+                    for (DataSnapshot dSnapshot : singleSnapshot
+                            .child(getString(R.string.field_likes)).getChildren()) {
                         Like like = new Like();
                         like.setUser_id(dSnapshot.getValue(Like.class).getUser_id());
                         likesList.add(like);
                     }
                     photo.setLikes(likesList);
                     photos.add(photo);
-
-
                 }
-                //Ustawiamy image grid
-                int gridWidth = getResources().getDisplayMetrics().widthPixels;
-                int imageWidth = gridWidth / NUM_GRID_CULUMS;
-                gridView.setColumnWidth(imageWidth);
+                setupImageGrid(photos);
 
-                ArrayList<String> imageUrls = new ArrayList<>();
-                for (int i = 0; i < photos.size(); i++) {
-                    imageUrls.add(photos.get(i).getImage_path());
-                }
-                GridImageAdapter gridImageAdapter = new GridImageAdapter(getActivity(), R.layout.layout_grid_imageview,
-                        "", imageUrls);
-                gridView.setAdapter(gridImageAdapter);
-
-                gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        onGridImageSelectedListener.onGridImageSelected(photos.get(i), ACTIVITY_NUM);
-                    }
-                });
             }
 
             @Override
@@ -205,7 +267,109 @@ public class ViewProfileFragment extends android.support.v4.app.Fragment {
         });
     }
 
-    private void setProfileWidgets(UserSettings userSettings){
+    private void isFollowing(){
+        Log.d(TAG, "isFollowing: checing if following this user");
+        setUnFollowing();
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+
+        Query query = reference
+                .child(getString(R.string.dbname_following))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .orderByChild(getString(R.string.field_user_id))
+                .equalTo(mUser.getUser_id());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+                    Log.d(TAG, "onDataChange: found user" + singleSnapshot.getValue(UserAccountSettings.class).toString());
+
+                    UserSettings settings = new UserSettings();
+                    settings.setUser(mUser);
+                    settings.setSettings(singleSnapshot.getValue(UserAccountSettings.class));
+                    setProfileWidgets(settings);
+
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void setFollowing(){
+        Log.d(TAG, "setFollowing: updating UI for following this user ");
+        mFollow.setVisibility(View.GONE);
+        mUnfollow.setVisibility(View.VISIBLE);
+        editProfile.setVisibility(View.GONE);
+    }
+
+    private void setUnFollowing(){
+        Log.d(TAG, "setFollowing: updating UI for unFollowing this user ");
+        mFollow.setVisibility(View.VISIBLE);
+        mUnfollow.setVisibility(View.GONE);
+        editProfile.setVisibility(View.GONE);
+    }
+
+    private void setCurrentUserProfile(){
+        Log.d(TAG, "setFollowing: updating UIO for showing current user their profile");
+        mFollow.setVisibility(View.GONE);
+        mUnfollow.setVisibility(View.GONE);
+        editProfile.setVisibility(View.VISIBLE);
+    }
+
+
+    private void setupImageGrid(final ArrayList<Photo> photos){
+        //Ustawiamy image grid
+        int gridWidth = getResources().getDisplayMetrics().widthPixels;
+        int imageWidth = gridWidth / NUM_GRID_CULUMS;
+        gridView.setColumnWidth(imageWidth);
+
+        ArrayList<String> imageUrls = new ArrayList<>();
+        for (int i = 0; i < photos.size(); i++) {
+            imageUrls.add(photos.get(i).getImage_path());
+        }
+        GridImageAdapter gridImageAdapter = new GridImageAdapter(getActivity(), R.layout.layout_grid_imageview,
+                "", imageUrls);
+        gridView.setAdapter(gridImageAdapter);
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                onGridImageSelectedListener.onGridImageSelected(photos.get(i), ACTIVITY_NUM);
+            }
+        });
+    }
+
+    private User getUserFromBundle() {
+        Log.d(TAG, "getUserFromBundle: args : " + getArguments());
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            return bundle.getParcelable(getString(R.string.intent_user));
+        } else {
+            return null;
+        }
+
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        try {
+            onGridImageSelectedListener = (OnGridImageSelectedListener) getActivity();
+        } catch (ClassCastException e) {
+            Log.e(TAG, "onAttach: ClassCastException" + e.getMessage());
+
+        }
+
+        super.onAttach(context);
+    }
+
+
+
+    private void setProfileWidgets(UserSettings userSettings) {
         Log.d(TAG, "setProfileWidgets: ustawianie wigdetów z uzyciem bazy z firebase" + userSettings.toString());
         Log.d(TAG, "setProfileWidgets: ustawianie wigdetów z uzyciem bazy z firebase" + userSettings.getSettings().getUsername());
 
@@ -228,7 +392,7 @@ public class ViewProfileFragment extends android.support.v4.app.Fragment {
     /*Ustawianie Toolbara*/
     private void setupToolbar() {
 
-        ((ProfileActivity)getActivity()).setSupportActionBar(toolbar);
+        ((ProfileActivity) getActivity()).setSupportActionBar(toolbar);
 
         profileMenu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -255,23 +419,23 @@ public class ViewProfileFragment extends android.support.v4.app.Fragment {
     /*
         ------------------------------FIREBASE -----------------------------------------
     */
-    private void setupFirebaseAuth(){
+    private void setupFirebaseAuth() {
         Log.d(TAG, "setupFirebaseAuth: setting up firebase");
-        
+
         mAuth = FirebaseAuth.getInstance();
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         myRef = mFirebaseDatabase.getReference();
-        
-        
+
+
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
 
 
-                if(user!=null){
+                if (user != null) {
                     Log.d(TAG, "user signed_in, with userUID:  " + user.getUid());
-                }else{
+                } else {
                     Log.d(TAG, "onAuthStateChanged: user signed_out");
                 }
             }
@@ -288,7 +452,7 @@ public class ViewProfileFragment extends android.support.v4.app.Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        if(mAuthStateListener != null){
+        if (mAuthStateListener != null) {
             mAuth.removeAuthStateListener(mAuthStateListener);
         }
     }

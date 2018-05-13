@@ -90,7 +90,7 @@ public class LoginActivity extends AppCompatActivity {
                 String emailText = email.getText().toString();
                 String passwordText = password.getText().toString();
 
-                if (isStringNull(emailText) && isStringNull(passwordText)) {
+                if (isStringNull(emailText) || isStringNull(passwordText)) {
                     Toast.makeText(context, "You must fill all the fields", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "POZIOM FAIL");
                 } else {
