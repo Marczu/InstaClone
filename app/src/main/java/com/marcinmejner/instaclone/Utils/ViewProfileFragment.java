@@ -76,7 +76,7 @@ public class ViewProfileFragment extends android.support.v4.app.Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView: start");
 
-        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_view_profile, container, false);
 
         mDisplayName = view.findViewById(R.id.display_name);
         mUsername = view.findViewById(R.id.username);
@@ -276,21 +276,7 @@ public class ViewProfileFragment extends android.support.v4.app.Fragment {
                 }
             }
         };
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                /*Pozyskiwanie danych o userze z bazy danych*/
-                setProfileWidgets(mFirebaseMethods.getUserSettings(dataSnapshot));
 
-                /*Pozyskiwanie obrazków usera z bazy danych*/
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
     }
 
     @Override
