@@ -36,7 +36,7 @@
                 android:text="marcin.mejner"
                 android:layout_marginLeft="15dp"
                 android:textColor="@color/black"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textStyle="bold"/>
 
             <TextView
@@ -46,7 +46,7 @@
                 android:layout_marginLeft="5dp"
                 android:textColor="@color/black"
                 android:layout_toRightOf="@+id/commentUsername"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:id="@+id/comment"/>
 
             <TextView
@@ -54,22 +54,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="5 d"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginLeft="15dp"
                 android:textColor="@color/grey"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:layout_below="@+id/comment"/>
 
             <TextView
                 android:id="@+id/comment_likes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="20 likes"
+                android:text="0 likes"
                 android:textStyle="bold"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginLeft="15dp"
                 android:textColor="@color/grey"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:layout_below="@+id/comment"
                 android:layout_toRightOf="@+id/comment_time_posted"/>
 
@@ -79,10 +79,10 @@
                 android:layout_height="wrap_content"
                 android:text="Reply"
                 android:textStyle="bold"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginLeft="15dp"
                 android:textColor="@color/grey"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:layout_below="@+id/comment"
                 android:layout_toRightOf="@+id/comment_likes"/>
             

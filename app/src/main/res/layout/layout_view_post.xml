@@ -108,7 +108,6 @@
             <RelativeLayout
                 android:id="@+id/relLayout3"
                 android:layout_below="@+id/relLayout2"
-                android:padding="20dp"
                 android:layout_marginBottom="50dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -120,38 +119,46 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Liked by Marcin, Ania, Tom and 20 others"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
                     android:textColor="@color/black"
-                    android:textSize="18dp"/>
+                    android:textSize="14dp"/>
 
                 <TextView
                     android:id="@+id/image_caption"
                     android:layout_below="@+id/image_likes"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="8dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="marcin.mejner Tori #toriamos #tori"
                     android:textColor="@color/black"
-                    android:textSize="18dp"/>
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:textSize="14dp"/>
 
                 <TextView
                     android:id="@+id/image_comments_link"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="8dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="View all 3 comments"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
                     android:layout_below="@+id/image_caption"
                     android:textColor="@color/grey"
-                    android:textSize="18dp"/>
+                    android:textSize="14dp"/>
 
                 <TextView
                     android:id="@+id/image_time_posted"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="8dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="3 DAYS AGO"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
                     android:layout_below="@+id/image_comments_link"
                     android:textColor="@color/grey"
-                    android:textSize="18dp"/>
+                    android:textSize="12dp"/>
 
 
             </RelativeLayout>

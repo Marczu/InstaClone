@@ -28,7 +28,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginStart="20dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="5dp"
                     android:layout_weight="30">
 
                     <de.hdodenhof.circleimageview.CircleImageView
@@ -62,12 +62,13 @@
                 android:layout_below="@+id/linLayout"
                 android:background="@drawable/white_gray_border_bottom"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="10dp">
 
                 <TextView
                     android:id="@+id/display_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
                     android:text="Marcin"
                     android:textColor="@color/black"
                     android:textSize="16sp"
@@ -75,6 +76,7 @@
 
                 <TextView
                     android:id="@+id/description"
+                    android:layout_marginLeft="10dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
@@ -87,6 +89,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
+                    android:layout_marginLeft="10dp"
                     android:text="http://marcinmejner.com"
                     android:textColor="@color/link_blue"
                     android:textSize="16sp" />
