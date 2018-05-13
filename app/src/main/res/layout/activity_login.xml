@@ -10,13 +10,22 @@
         android:paddingTop="55dp"
         android:paddingLeft="25dp"
         android:paddingRight="25dp">
-        
-        <ImageView
+
+        <TextView
             android:layout_width="wrap_content"
-            android:layout_height="75dp"
-            android:src="@drawable/instagram_logo"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="40dp"/>
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/galindo"
+            android:text="Marccogram"
+            android:textColor="@color/colorPrimary"
+            android:textSize="40sp" />
+        
+        <!--<ImageView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="75dp"-->
+            <!--android:src="@drawable/instagram_logo"-->
+            <!--android:layout_gravity="center_horizontal"-->
+            <!--android:layout_marginBottom="40dp"/>-->
         
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"

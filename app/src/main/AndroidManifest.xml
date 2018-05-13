@@ -32,6 +32,10 @@
         <activity android:name=".Login.LoginActivity"/>
         <activity android:name=".Login.RegisterActivity"/>
         <activity android:name=".Share.NextActivity"/>
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>
