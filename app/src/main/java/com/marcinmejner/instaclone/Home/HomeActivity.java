@@ -52,7 +52,8 @@ public class HomeActivity extends AppCompatActivity {
 
         ViewCommentsFragment fragment = new ViewCommentsFragment();
         Bundle args = new Bundle();
-        args.putParcelable(getString(R.string.photo), photo);
+        args.putParcelable(getString(R.string.bundle_photo), photo);
+        args.putParcelable(getString(R.string.bundle_user_account_settings), settings);
     }
 
     private void initImageLoader(){

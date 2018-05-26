@@ -119,7 +119,7 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick:  loading thread for " + getItem(position).getPhoto_id());
-                ((HomeActivity)mContex)
+//                ((HomeActivity)mContex)
             }
         });
 
