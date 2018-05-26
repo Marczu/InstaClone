@@ -58,6 +58,7 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mLayoutResource = resource;
         this.mContex = context;
+        mReference = FirebaseDatabase.getInstance().getReference();
     }
 
     static class ViewHolder {
@@ -98,7 +99,7 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
             holder.comments = convertView.findViewById(R.id.image_comments_link);
             holder.caption = convertView.findViewById(R.id.image_caption);
             holder.timeDelta = convertView.findViewById(R.id.image_time_posted);
-            holder.mProfileImage = convertView.findViewById(R.id.profile_image);
+            holder.mProfileImage = convertView.findViewById(R.id.profile_photo);
             holder.heart = new Heart(holder.heartWhite, holder.heartRed);
             holder.photo = getItem(position);
             holder.detector = new GestureDetector(mContex, new GestureListener(holder));

@@ -24,6 +24,8 @@ import com.marcinmejner.instaclone.models.Photo;
 import com.marcinmejner.instaclone.models.UserAccountSettings;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,6 +74,7 @@ public class HomeFragment extends Fragment {
                     mFollowing.add(singleSnapshot.child(getString(R.string.field_user_id)).getValue().toString());
                 }
                 //get photos
+                getPhotos();
             }
 
             @Override
@@ -123,6 +126,7 @@ public class HomeFragment extends Fragment {
                     }
                     if(count >= mFollowing.size() - 1){
                         //display our photos
+                        displayPhotos();
                     }
                 }
 
@@ -131,6 +135,20 @@ public class HomeFragment extends Fragment {
 
                 }
             });
+        }
+    }
+
+    private void displayPhotos(){
+        if(mPhotos != null){
+            Collections.sort(mPhotos, new Comparator<Photo>() {
+                @Override
+                public int compare(Photo o1, Photo o2) {
+                    return o2.getDate_created().compareTo(o1.getDate_created());
+                }
+            });
+
+            mAdapter = new MainfeedListAdapter(getActivity(), R.layout.layout_mainfeed_listitem, mPhotos);
+            mListView.setAdapter(mAdapter);
         }
     }
 }
