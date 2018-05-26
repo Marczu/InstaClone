@@ -48,7 +48,7 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
 
     private LayoutInflater mInflater;
     private int mLayoutResource;
-    private Context mContex;
+    private Context mContext;
     private DatabaseReference mReference;
     private String currentUsename = "";
 
@@ -57,7 +57,7 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
 
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mLayoutResource = resource;
-        this.mContex = context;
+        this.mContext = context;
         mReference = FirebaseDatabase.getInstance().getReference();
     }
 
@@ -102,7 +102,7 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
             holder.mProfileImage = convertView.findViewById(R.id.profile_photo);
             holder.heart = new Heart(holder.heartWhite, holder.heartRed);
             holder.photo = getItem(position);
-            holder.detector = new GestureDetector(mContex, new GestureListener(holder));
+            holder.detector = new GestureDetector(mContext, new GestureListener(holder));
             holder.users = new StringBuilder();
 
             convertView.setTag(holder);
@@ -123,7 +123,7 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick:  loading thread for " + getItem(position).getPhoto_id());
-                ((HomeActivity)mContex).onCommentThreadSelected(getItem(position), holder.settings);
+                ((HomeActivity) mContext).onCommentThreadSelected(getItem(position));
 
                 //trzeba bedzie coś jeszcze dodać
             }
@@ -144,8 +144,8 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
         //odbieramy profileImage i username
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         Query query = reference
-                .child(mContex.getString(R.string.dbname_user_account_settings))
-                .orderByChild(mContex.getString(R.string.field_user_id))
+                .child(mContext.getString(R.string.dbname_user_account_settings))
+                .orderByChild(mContext.getString(R.string.field_user_id))
                 .equalTo(getItem(position).getUser_id());
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -160,11 +160,11 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
                         public void onClick(View v) {
                             Log.d(TAG, "onClick: navigating to profile of " + holder.user.getUsername());
 
-                            Intent intent = new Intent(mContex, ProfileActivity.class);
-                            intent.putExtra(mContex.getString(R.string.calling_activity),
-                                    mContex.getString(R.string.home_activity));
-                            intent.putExtra(mContex.getString(R.string.intent_user), holder.user);
-                            mContex.startActivity(intent);
+                            Intent intent = new Intent(mContext, ProfileActivity.class);
+                            intent.putExtra(mContext.getString(R.string.calling_activity),
+                                    mContext.getString(R.string.home_activity));
+                            intent.putExtra(mContext.getString(R.string.intent_user), holder.user);
+                            mContext.startActivity(intent);
                         }
                     });
 
@@ -175,11 +175,11 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
                         public void onClick(View v) {
                             Log.d(TAG, "onClick: navigating to profile of " + holder.user.getUsername());
 
-                            Intent intent = new Intent(mContex, ProfileActivity.class);
-                            intent.putExtra(mContex.getString(R.string.calling_activity),
-                                    mContex.getString(R.string.home_activity));
-                            intent.putExtra(mContex.getString(R.string.intent_user), holder.user);
-                            mContex.startActivity(intent);
+                            Intent intent = new Intent(mContext, ProfileActivity.class);
+                            intent.putExtra(mContext.getString(R.string.calling_activity),
+                                    mContext.getString(R.string.home_activity));
+                            intent.putExtra(mContext.getString(R.string.intent_user), holder.user);
+                            mContext.startActivity(intent);
                         }
                     });
 
@@ -187,7 +187,7 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
                     holder.comment.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            ((HomeActivity)mContex).onCommentThreadSelected(getItem(position), holder.settings);
+                            ((HomeActivity) mContext).onCommentThreadSelected(getItem(position));
 
                             //do dokonczenia
                         }
@@ -205,8 +205,8 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
 
         //get user object
         Query userQuerry = mReference
-                .child(mContex.getString(R.string.dbname_users))
-                .orderByChild(mContex.getString(R.string.field_user_id))
+                .child(mContext.getString(R.string.dbname_users))
+                .orderByChild(mContext.getString(R.string.field_user_id))
                 .equalTo(getItem(position).getUser_id());
         userQuerry.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -253,9 +253,9 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
 
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
             Query query = reference
-                    .child(mContex.getString(R.string.dbname_photos))
+                    .child(mContext.getString(R.string.dbname_photos))
                     .child(mHolder.photo.getPhoto_id())
-                    .child(mContex.getString(R.string.field_likes));
+                    .child(mContext.getString(R.string.field_likes));
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -266,16 +266,16 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
                         if (mHolder.likeByCurrentUser &&
                                 singleSnapshot.getValue(Like.class).getUser_id()
                                         .equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-                            mReference.child(mContex.getString(R.string.dbname_photos))
+                            mReference.child(mContext.getString(R.string.dbname_photos))
                                     .child(mHolder.photo.getPhoto_id())
-                                    .child(mContex.getString(R.string.field_likes))
+                                    .child(mContext.getString(R.string.field_likes))
                                     .child(keyID)
                                     .removeValue();
 
-                            mReference.child(mContex.getString(R.string.dbname_user_photos))
+                            mReference.child(mContext.getString(R.string.dbname_user_photos))
                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                     .child(mHolder.photo.getPhoto_id())
-                                    .child(mContex.getString(R.string.field_likes))
+                                    .child(mContext.getString(R.string.field_likes))
                                     .child(keyID)
                                     .removeValue();
 
@@ -312,16 +312,16 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
         Like like = new Like();
         like.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-        mReference.child(mContex.getString(R.string.dbname_photos))
+        mReference.child(mContext.getString(R.string.dbname_photos))
                 .child(holder.photo.getPhoto_id())
-                .child(mContex.getString(R.string.field_likes))
+                .child(mContext.getString(R.string.field_likes))
                 .child(newLikeID)
                 .setValue(like);
 
-        mReference.child(mContex.getString(R.string.dbname_user_photos))
+        mReference.child(mContext.getString(R.string.dbname_user_photos))
                 .child(holder.photo.getUser_id())
                 .child(holder.photo.getPhoto_id())
-                .child(mContex.getString(R.string.field_likes))
+                .child(mContext.getString(R.string.field_likes))
                 .child(newLikeID)
                 .setValue(like);
 
@@ -334,8 +334,8 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         Query query = reference
-                .child(mContex.getString(R.string.dbname_users))
-                .orderByChild(mContex.getString(R.string.field_user_id))
+                .child(mContext.getString(R.string.dbname_users))
+                .orderByChild(mContext.getString(R.string.field_user_id))
                 .equalTo(FirebaseAuth.getInstance().getCurrentUser().getUid());
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -364,9 +364,9 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
 
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
             Query query = reference
-                    .child(mContex.getString(R.string.dbname_photos))
+                    .child(mContext.getString(R.string.dbname_photos))
                     .child(holder.photo.getPhoto_id())
-                    .child(mContex.getString(R.string.field_likes));
+                    .child(mContext.getString(R.string.field_likes));
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -375,8 +375,8 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
 
                         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
                         Query query = reference
-                                .child(mContex.getString(R.string.dbname_users))
-                                .orderByChild(mContex.getString(R.string.field_user_id))
+                                .child(mContext.getString(R.string.dbname_users))
+                                .orderByChild(mContext.getString(R.string.field_user_id))
                                 .equalTo(singleSnapshot.getValue(Like.class).getUser_id());
                         query.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override

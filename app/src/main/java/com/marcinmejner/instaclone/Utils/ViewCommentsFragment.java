@@ -208,17 +208,25 @@ public class ViewCommentsFragment extends Fragment {
             }
         };
 
-        if(mPhoto.getComments().size() == 0 ){
-            mComments.clear();
-            Comment firstComment = new Comment();
-            firstComment.setComment(mPhoto.getCaption());
-            firstComment.setUser_id(mPhoto.getUser_id());
-            firstComment.setDate_created(mPhoto.getDate_created());
+        try{
 
-            mComments.add(firstComment);
-            mPhoto.setComments(mComments);
-            setupWidgets();
+            if(mPhoto.getComments().size() == 0 ){
+                mComments.clear();
+                Comment firstComment = new Comment();
+                firstComment.setComment(mPhoto.getCaption());
+                firstComment.setUser_id(mPhoto.getUser_id());
+                firstComment.setDate_created(mPhoto.getDate_created());
+
+                mComments.add(firstComment);
+                mPhoto.setComments(mComments);
+                setupWidgets();
+            }
+
+        }catch(NullPointerException e){
+            Log.e(TAG, "setupFirebaseAuth: NullPointerException " + e.getMessage());
         }
+
+
 
         myRef.child(mContext.getString(R.string.dbname_photos))
                 .child(mPhoto.getPhoto_id())
