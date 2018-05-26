@@ -1,6 +1,7 @@
 package com.marcinmejner.instaclone.Utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -21,12 +22,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.marcinmejner.instaclone.Home.HomeActivity;
+import com.marcinmejner.instaclone.Profile.ProfileActivity;
 import com.marcinmejner.instaclone.R;
 import com.marcinmejner.instaclone.models.Comment;
 import com.marcinmejner.instaclone.models.Like;
 import com.marcinmejner.instaclone.models.Photo;
 import com.marcinmejner.instaclone.models.User;
 import com.marcinmejner.instaclone.models.UserAccountSettings;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -119,7 +122,82 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick:  loading thread for " + getItem(position).getPhoto_id());
-//                ((HomeActivity)mContex)
+                ((HomeActivity)mContex).onCommentThreadSelected(getItem(position), holder.settings);
+
+                //trzeba bedzie coś jeszcze dodać
+            }
+        });
+
+        //ustawiamy czas w ktorym swtorzony został post
+        String timestampDifference = getTimeStampDifference(getItem(position));
+        if(!timestampDifference.equals("0")){
+            holder.timeDelta.setText(timestampDifference + "DAYS AGO");
+        }else {
+            holder.timeDelta.setText("TODAY");
+        }
+
+        //ustawiamy zdjecie profilowe
+        final ImageLoader imageLoader = ImageLoader.getInstance();
+        imageLoader.displayImage(getItem(position).getImage_path(), holder.image);
+
+        //odbieramy profileImage i username
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference
+                .child(mContex.getString(R.string.dbname_user_account_settings))
+                .orderByChild(mContex.getString(R.string.field_user_id))
+                .equalTo(getItem(position).getUser_id());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+
+//                    currentUsename = singleSnapshot.getValue(UserAccountSettings.class).getUsername();
+                    Log.d(TAG, "onDataChange: found user " + singleSnapshot.getValue(UserAccountSettings.class).getUsername());
+                    holder.username.setText(singleSnapshot.getValue(UserAccountSettings.class).getUsername());
+                    holder.username.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Log.d(TAG, "onClick: navigating to profile of " + holder.user.getUsername());
+
+                            Intent intent = new Intent(mContex, ProfileActivity.class);
+                            intent.putExtra(mContex.getString(R.string.calling_activity),
+                                    mContex.getString(R.string.home_activity));
+                            intent.putExtra(mContex.getString(R.string.intent_user), holder.user);
+                            mContex.startActivity(intent);
+                        }
+                    });
+
+                    imageLoader.displayImage(singleSnapshot.getValue(UserAccountSettings.class).getProfile_photo(), holder.mProfileImage);
+
+                    holder.mProfileImage.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Log.d(TAG, "onClick: navigating to profile of " + holder.user.getUsername());
+
+                            Intent intent = new Intent(mContex, ProfileActivity.class);
+                            intent.putExtra(mContex.getString(R.string.calling_activity),
+                                    mContex.getString(R.string.home_activity));
+                            intent.putExtra(mContex.getString(R.string.intent_user), holder.user);
+                            mContex.startActivity(intent);
+                        }
+                    });
+
+                    holder.settings = singleSnapshot.getValue(UserAccountSettings.class);
+                    holder.comment.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            ((HomeActivity)mContex).onCommentThreadSelected(getItem(position), holder.settings);
+
+                            //do dokonczenia
+                        }
+                    });
+            }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
 

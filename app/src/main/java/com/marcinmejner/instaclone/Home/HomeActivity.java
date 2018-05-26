@@ -1,5 +1,6 @@
 package com.marcinmejner.instaclone.Home;
 
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -54,6 +55,12 @@ public class HomeActivity extends AppCompatActivity {
         Bundle args = new Bundle();
         args.putParcelable(getString(R.string.bundle_photo), photo);
         args.putParcelable(getString(R.string.bundle_user_account_settings), settings);
+        fragment.setArguments(args);
+
+        android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.container, fragment);
+        transaction.addToBackStack(getString(R.string.view_comment_fragment));
+        transaction.commit();
     }
 
     private void initImageLoader(){
