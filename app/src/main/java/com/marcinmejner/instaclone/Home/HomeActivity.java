@@ -75,13 +75,13 @@ public class HomeActivity extends AppCompatActivity {
         transaction.commit();
     }
 
-    private void hideLayout(){
+    public void hideLayout(){
         Log.d(TAG, "hideLayout: hiding layout");
         mRelativeLayout.setVisibility(View.GONE);
         mFrameLayout.setVisibility(View.VISIBLE);
     }
 
-    private void showLayout(){
+    public void showLayout(){
         Log.d(TAG, "hideLayout: showing layout");
         mRelativeLayout.setVisibility(View.VISIBLE);
         mFrameLayout.setVisibility(View.GONE);

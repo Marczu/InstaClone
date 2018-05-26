@@ -126,6 +126,7 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
                 ((HomeActivity) mContext).onCommentThreadSelected(getItem(position));
 
                 //trzeba bedzie coś jeszcze dodać
+                ((HomeActivity)mContext).hideLayout();
             }
         });
 
@@ -190,6 +191,8 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
                             ((HomeActivity) mContext).onCommentThreadSelected(getItem(position));
 
                             //do dokonczenia
+                            ((HomeActivity)mContext).hideLayout();
+
                         }
                     });
             }
