@@ -202,6 +202,32 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
         });
 
 
+        //get user object
+        Query userQuerry = mReference
+                .child(mContex.getString(R.string.dbname_users))
+                .orderByChild(mContex.getString(R.string.field_user_id))
+                .equalTo(getItem(position).getUser_id());
+        userQuerry.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+                    Log.d(TAG, "onDataChange: found user " + singleSnapshot.getValue(User.class).getUsername());
+
+                    holder.user =  singleSnapshot.getValue(User.class);
+
+
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
 
 
         return convertView;
