@@ -1,6 +1,5 @@
 package com.marcinmejner.instaclone.Profile;
 
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;

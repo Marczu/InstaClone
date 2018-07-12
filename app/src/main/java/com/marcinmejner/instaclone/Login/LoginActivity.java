@@ -3,7 +3,6 @@ package com.marcinmejner.instaclone.Login;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -21,12 +20,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.marcinmejner.instaclone.Home.HomeActivity;
-import com.marcinmejner.instaclone.Likes.LikesActivity;
 import com.marcinmejner.instaclone.R;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
-
-import org.w3c.dom.Text;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";

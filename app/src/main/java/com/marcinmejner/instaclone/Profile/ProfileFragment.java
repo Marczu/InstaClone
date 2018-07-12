@@ -1,6 +1,5 @@
 package com.marcinmejner.instaclone.Profile;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,7 +16,6 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,7 +26,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
-import com.marcinmejner.instaclone.Login.LoginActivity;
 import com.marcinmejner.instaclone.R;
 import com.marcinmejner.instaclone.Utils.BottomNavigationViewHelper;
 import com.marcinmejner.instaclone.Utils.FirebaseMethods;
@@ -37,7 +34,6 @@ import com.marcinmejner.instaclone.Utils.UniversalImageLoader;
 import com.marcinmejner.instaclone.models.Comment;
 import com.marcinmejner.instaclone.models.Like;
 import com.marcinmejner.instaclone.models.Photo;
-import com.marcinmejner.instaclone.models.User;
 import com.marcinmejner.instaclone.models.UserAccountSettings;
 import com.marcinmejner.instaclone.models.UserSettings;
 

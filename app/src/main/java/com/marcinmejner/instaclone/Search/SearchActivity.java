@@ -31,7 +31,6 @@ import com.marcinmejner.instaclone.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by Marc on 15.03.2018.

@@ -19,7 +19,6 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.EmailAuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -38,7 +37,6 @@ import com.marcinmejner.instaclone.dialogs.ConfirmPasswordDialog;
 import com.marcinmejner.instaclone.models.User;
 import com.marcinmejner.instaclone.models.UserAccountSettings;
 import com.marcinmejner.instaclone.models.UserSettings;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 

@@ -19,15 +19,12 @@ import com.google.firebase.database.ValueEventListener;
 import com.marcinmejner.instaclone.R;
 import com.marcinmejner.instaclone.Utils.MainfeedListAdapter;
 import com.marcinmejner.instaclone.models.Comment;
-import com.marcinmejner.instaclone.models.Like;
 import com.marcinmejner.instaclone.models.Photo;
-import com.marcinmejner.instaclone.models.UserAccountSettings;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
